@@ -4,16 +4,16 @@ import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 
 const viewerSelect = document.querySelector('#viewer-select');
 const panels = document.querySelectorAll('[data-viewer-panel]');
-let pointCloudStarted = false;
+const startedViewers = new WeakSet();
 
 viewerSelect.addEventListener('change', () => {
   showViewer(viewerSelect.value);
 });
 
 const initialViewer = new URLSearchParams(window.location.search).get('viewer');
-if (initialViewer === 'point-cloud') {
-  viewerSelect.value = 'point-cloud';
-  showViewer('point-cloud');
+if (initialViewer === 'point-cloud' || initialViewer === 'point-cloud-dense') {
+  viewerSelect.value = initialViewer;
+  showViewer(initialViewer);
 }
 
 function showViewer(selected) {
@@ -21,14 +21,16 @@ function showViewer(selected) {
     panel.hidden = panel.dataset.viewerPanel !== selected;
   }
 
-  if (selected === 'point-cloud' && !pointCloudStarted) {
-    pointCloudStarted = true;
-    startPointCloudViewer();
+  if (selected.startsWith('point-cloud')) {
+    const host = document.querySelector(`[data-viewer-panel="${selected}"] .point-cloud-viewer`);
+    if (host && !startedViewers.has(host)) {
+      startedViewers.add(host);
+      startPointCloudViewer(host);
+    }
   }
 }
 
-function startPointCloudViewer() {
-  const host = document.querySelector('#point-cloud-viewer');
+function startPointCloudViewer(host) {
   const source = host.dataset.source;
   const message = host.querySelector('.viewer-message');
   host.dataset.status = 'loading';

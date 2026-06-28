@@ -34,7 +34,8 @@
     <label for="viewer-select">Viewer:</label>
     <select id="viewer-select">
       <option value="mesh">Textured mesh</option>
-      <option value="point-cloud">Point cloud</option>
+      <option value="point-cloud">Point cloud preview</option>
+      <option value="point-cloud-dense">Point cloud dense</option>
     </select>
   </p>
 
@@ -52,8 +53,14 @@
     </section>
 
     <section data-viewer-panel="point-cloud" hidden>
-      <div id="point-cloud-viewer" data-source="cloud-preview.ply">
-        <p class="viewer-message">Loading point cloud...</p>
+      <div class="point-cloud-viewer" data-source="cloud-preview.ply">
+        <p class="viewer-message">Loading point cloud preview...</p>
+      </div>
+    </section>
+
+    <section data-viewer-panel="point-cloud-dense" hidden>
+      <div class="point-cloud-viewer" data-source="cloud-dense.ply">
+        <p class="viewer-message">Loading dense point cloud...</p>
       </div>
     </section>
   </div>
@@ -62,6 +69,7 @@
   <ul class="resources">
     <li><a href="hackeriet-model.glb">GLB model</a></li>
     <li><a href="cloud-preview.ply">Point cloud preview PLY</a></li>
+    <li><a href="cloud-dense.ply">Dense point cloud PLY</a></li>
     <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj">Original OBJ</a></li>
     <li><a href="colorplan.pdf">Color plan PDF</a></li>
     <li><a href="ceilingcolorplan.pdf">Ceiling color plan PDF</a></li>
