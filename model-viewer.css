@@ -1,0 +1,118 @@
+body {
+  margin: 40px auto;
+  max-width: 960px;
+  line-height: 1.6em;
+  font-family: 'Roboto', sans-serif;
+  font-size: 14pt;
+  color: #444;
+  padding: 0 10px;
+}
+
+#logo {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 40px;
+  width: 40%;
+  -webkit-filter: drop-shadow(5px 5px 5px #555);
+  filter: drop-shadow(5px 5px 5px #555);
+  transition: opacity 0.7s ease-in-out;
+}
+
+.sm-ln {
+  float: right;
+  font-size: 12pt;
+  display: block;
+  clear: both;
+}
+
+h1,
+h2 {
+  line-height: 0.9;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.flag {
+  display: inline-block;
+  height: 0.8em;
+  width: 1.3em;
+  background-position: center;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.progress-pride {
+  background-image: url("https://hackeriet.no/images/flag-progress-pride.png");
+}
+
+a {
+  color: inherit;
+}
+
+.viewer-wrap {
+  clear: both;
+  margin: 30px auto;
+  padding: 5px;
+  border: 2px solid #C0C0C0;
+  box-sizing: border-box;
+  background: #f8f8f8;
+}
+
+model-viewer {
+  display: block;
+  width: 100%;
+  height: min(72vh, 720px);
+  min-height: 420px;
+  background: #eeeeee;
+}
+
+.resources {
+  columns: 2;
+  column-gap: 40px;
+  padding-left: 1.2em;
+}
+
+.resources li {
+  break-inside: avoid;
+  margin-bottom: 0.35em;
+}
+
+@media (max-width: 600px) {
+  body {
+    margin-top: 24px;
+  }
+
+  #logo {
+    width: 65%;
+  }
+
+  model-viewer {
+    height: 68vh;
+    min-height: 320px;
+  }
+
+  .resources {
+    columns: 1;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #22272E;
+    color: #ADBAC7;
+  }
+
+  a {
+    color: #539BF5;
+  }
+
+  .viewer-wrap {
+    border-color: #768390;
+    background: #1c2128;
+  }
+
+  model-viewer {
+    background: #171b20;
+  }
+}

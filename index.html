@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hackeriet 3D model</title>
+  <meta name="description" content="Interactive 3D scan of Hackeriet in Oslo.">
+  <link href="https://hackeriet.no/css/font-roboto.css" rel="stylesheet" type="text/css">
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <link rel="stylesheet" href="model-viewer.css">
+</head>
+<body>
+  <img src="https://hackeriet.no/comotion-sjn-transparent-1.2.svg" id="logo" alt="Hackeriet">
+  <a href="https://hackeriet.no/" class="sm-ln">Hackeriet</a>
+  <a href="https://github.com/hackeriet/hackeriet-model-3d" class="sm-ln">GitHub</a>
+
+  <h1>Hackeriet 3D model <div class="flag progress-pride"></div></h1>
+
+  <p>
+    An interactive 3D scan of Hackeriet, a hackerspace in Oslo. Drag to orbit,
+    scroll to zoom, and use right-drag or two fingers to pan.
+  </p>
+
+  <div class="viewer-wrap">
+    <model-viewer
+      src="hackeriet-model.glb"
+      alt="A 3D scan of Hackeriet in Oslo"
+      camera-controls
+      touch-action="pan-y"
+      shadow-intensity="0.7"
+      exposure="1"
+      environment-image="neutral">
+    </model-viewer>
+  </div>
+
+  <h2>Files</h2>
+  <ul class="resources">
+    <li><a href="hackeriet-model.glb">GLB model</a></li>
+    <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj">Original OBJ</a></li>
+    <li><a href="colorplan.pdf">Color plan PDF</a></li>
+    <li><a href="ceilingcolorplan.pdf">Ceiling color plan PDF</a></li>
+    <li><a href="xyz/cloud.xyz.xz">Compressed point cloud</a></li>
+  </ul>
+</body>
+</html>
