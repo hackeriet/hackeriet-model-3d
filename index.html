@@ -6,17 +6,13 @@
   <title>Hackeriet 3D model</title>
   <meta name="description" content="Interactive 3D scan of Hackeriet in Oslo.">
   <link href="https://hackeriet.no/css/font-roboto.css" rel="stylesheet" type="text/css">
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-  <script type="importmap">
-    {
-      "imports": {
-        "three": "https://unpkg.com/three@0.180.0/build/three.module.js",
-        "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
-      }
-    }
-  </script>
-  <script type="module" src="point-cloud-viewer.js"></script>
+  <link rel="stylesheet" href="potree/libs/jquery-ui/jquery-ui.min.css">
+  <link rel="stylesheet" href="potree/libs/openlayers3/ol.css">
+  <link rel="stylesheet" href="potree/libs/spectrum/spectrum.css">
+  <link rel="stylesheet" href="potree/libs/jstree/themes/mixed/style.css">
+  <link rel="stylesheet" href="potree/build/potree/potree.css">
   <link rel="stylesheet" href="model-viewer.css">
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 </head>
 <body>
   <img src="https://hackeriet.no/comotion-sjn-transparent-1.2.svg" id="logo" alt="Hackeriet">
@@ -34,8 +30,7 @@
     <label for="viewer-select">Viewer:</label>
     <select id="viewer-select">
       <option value="mesh">Textured mesh</option>
-      <option value="point-cloud">Point cloud preview</option>
-      <option value="point-cloud-dense">Point cloud dense</option>
+      <option value="potree">Point cloud</option>
     </select>
   </p>
 
@@ -52,15 +47,10 @@
       </model-viewer>
     </section>
 
-    <section data-viewer-panel="point-cloud" hidden>
-      <div class="point-cloud-viewer" data-source="cloud-preview.ply">
-        <p class="viewer-message">Loading point cloud preview...</p>
-      </div>
-    </section>
-
-    <section data-viewer-panel="point-cloud-dense" hidden>
-      <div class="point-cloud-viewer" data-source="cloud-dense.ply">
-        <p class="viewer-message">Loading dense point cloud...</p>
+    <section data-viewer-panel="potree" hidden>
+      <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
+        <div id="potree-render-area"></div>
+        <p class="viewer-message">Loading point cloud...</p>
       </div>
     </section>
   </div>
@@ -68,12 +58,25 @@
   <h2>Files</h2>
   <ul class="resources">
     <li><a href="hackeriet-model.glb">GLB model</a></li>
-    <li><a href="cloud-preview.ply">Point cloud preview PLY</a></li>
-    <li><a href="cloud-dense.ply">Dense point cloud PLY</a></li>
+    <li><a href="pointclouds/hackeriet-potree/metadata.json">Potree point cloud metadata</a></li>
     <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj">Original OBJ</a></li>
     <li><a href="colorplan.pdf">Color plan PDF</a></li>
     <li><a href="ceilingcolorplan.pdf">Ceiling color plan PDF</a></li>
-    <li><a href="xyz/cloud.xyz.xz">Compressed point cloud</a></li>
+    <li><a href="xyz/cloud.xyz.xz">Compressed source point cloud</a></li>
   </ul>
+
+  <script src="potree/libs/jquery/jquery-3.1.1.min.js"></script>
+  <script src="potree/libs/spectrum/spectrum.js"></script>
+  <script src="potree/libs/jquery-ui/jquery-ui.min.js"></script>
+  <script src="potree/libs/other/BinaryHeap.js"></script>
+  <script src="potree/libs/tween/tween.min.js"></script>
+  <script src="potree/libs/d3/d3.js"></script>
+  <script src="potree/libs/proj4/proj4.js"></script>
+  <script src="potree/libs/openlayers3/ol.js"></script>
+  <script src="potree/libs/i18next/i18next.js"></script>
+  <script src="potree/libs/jstree/jstree.js"></script>
+  <script src="potree/build/potree/potree.js"></script>
+  <script src="potree/libs/plasio/js/laslaz.js"></script>
+  <script src="potree-viewer.js"></script>
 </body>
 </html>

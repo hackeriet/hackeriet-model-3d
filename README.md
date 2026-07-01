@@ -5,7 +5,18 @@ A 3D scan of Hackeriet in Oslo.
 The GitHub Pages viewer provides two browser views:
 
 - `hackeriet-model.glb`: textured mesh converted from the original OBJ/MTL assets in `obj/`.
-- `cloud-preview.ply`: lightweight point-cloud preview generated from `xyz/cloud.xyz.xz` by keeping every 10th point.
-- `cloud-dense.ply`: dense point-cloud file generated from `xyz/cloud.xyz.xz` by evenly sampling 6,633,313 points into a 99,499,990 byte PLY, just under GitHub's single-file limit.
+- `pointclouds/hackeriet-potree/metadata.json`: Potree point cloud generated from the original XYZ+RGB source.
 
 The original compressed point cloud remains available as `xyz/cloud.xyz.xz`.
+
+## Point cloud conversion
+
+The Potree point cloud was generated with PotreeConverter 2.1.3 from a temporary LAS file converted from `xyz/cloud.xyz.xz`.
+
+The source XYZ rows are in this format:
+
+```text
+x y z red green blue
+```
+
+The generated Potree output uses Brotli encoding and contains all 8,890,390 source points.
