@@ -22,16 +22,23 @@
   <h1>Hackeriet 3D model <div class="flag progress-pride"></div></h1>
 
   <p>
-    An interactive 3D scan of Hackeriet, a hackerspace in Oslo. Drag to orbit,
-    scroll to zoom, and use right-drag or two fingers to pan.
+    An interactive 3D scan of Hackeriet, a hackerspace in Oslo.
   </p>
 
-  <p class="viewer-choice">
+  <p class="viewer-controls">
     <label for="viewer-select">Viewer:</label>
     <select id="viewer-select">
       <option value="mesh">Textured mesh</option>
       <option value="potree">Point cloud</option>
     </select>
+    <label for="navigation-select">Navigation:</label>
+    <select id="navigation-select">
+      <option value="walk">Walk</option>
+      <option value="orbit">Orbit</option>
+      <option value="fly">Fly</option>
+    </select>
+    <button type="button" id="toggle-navigation" aria-pressed="false">Enable navigation</button>
+    <button type="button" id="reset-view">Reset view</button>
   </p>
 
   <div class="viewer-wrap">
@@ -50,6 +57,7 @@
     <section data-viewer-panel="potree" hidden>
       <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
         <div id="potree-render-area"></div>
+        <button type="button" id="potree-enable-navigation">Enable navigation</button>
         <p class="viewer-message">Loading point cloud...</p>
       </div>
     </section>

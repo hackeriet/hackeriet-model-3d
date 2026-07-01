@@ -50,22 +50,38 @@ a {
   color: inherit;
 }
 
-.viewer-choice {
+.viewer-controls {
   clear: both;
+  display: flex;
   margin-top: 30px;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
 }
 
-.viewer-choice label {
-  margin-right: 0.4em;
+.viewer-controls label {
+  margin-right: 0;
 }
 
-.viewer-choice select {
+.viewer-controls select,
+.viewer-controls button,
+#potree-enable-navigation {
   font: inherit;
   font-size: 12pt;
   color: inherit;
   background: transparent;
   border: 2px solid #C0C0C0;
   padding: 0.25em 0.5em;
+}
+
+.viewer-controls button,
+#potree-enable-navigation {
+  cursor: pointer;
+}
+
+.viewer-controls [disabled] {
+  opacity: 0.5;
+  cursor: default;
 }
 
 .viewer-wrap {
@@ -98,6 +114,24 @@ model-viewer,
 #potree-render-area {
   position: absolute;
   inset: 0;
+}
+
+#potree-viewer:not(.navigation-active) #potree-render-area {
+  pointer-events: none;
+}
+
+#potree-enable-navigation {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  transform: translate(-50%, -50%);
+  background: rgba(248, 248, 248, 0.9);
+}
+
+#potree-viewer.navigation-active #potree-enable-navigation,
+#potree-viewer[data-status="loading"] #potree-enable-navigation {
+  display: none;
 }
 
 .viewer-message {
@@ -151,7 +185,9 @@ model-viewer,
     color: #539BF5;
   }
 
-  .viewer-choice select {
+  .viewer-controls select,
+  .viewer-controls button,
+  #potree-enable-navigation {
     border-color: #768390;
   }
 
@@ -165,6 +201,7 @@ model-viewer,
     background: #171b20;
   }
 
+  #potree-enable-navigation,
   .viewer-message {
     background: rgba(34, 39, 46, 0.86);
   }
