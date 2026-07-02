@@ -9,8 +9,8 @@
   };
 
   const initialView = {
-    position: [-6.3, -12.5, 3.6],
-    target: [-6.3, 4.0, 3.0],
+    position: [-6.3, -6.0, 3.35],
+    target: [-6.3, 10.5, 2.75],
   };
 
   const moveSpeeds = {

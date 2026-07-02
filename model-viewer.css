@@ -1,19 +1,25 @@
-html {
-  overflow-y: scroll;
+html,
+body {
+  min-height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto !important;
 }
 
 body {
-  position: static;
-  width: auto;
-  height: auto;
-  min-height: 100%;
-  margin: 40px auto;
-  overflow: visible;
-  max-width: 960px;
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  margin: 0;
+  padding: 0;
   line-height: 1.6em;
   font-family: 'Roboto', sans-serif;
   font-size: 14pt;
   color: #444;
+}
+
+.page-shell {
+  max-width: 960px;
+  margin: 40px auto;
   padding: 0 10px;
 }
 
@@ -120,13 +126,14 @@ model-viewer,
   overflow: hidden;
 }
 
-#potree-render-area {
+#potree-render-area,
+#potree-navigation-shield {
   position: absolute;
   inset: 0;
 }
 
-#potree-viewer:not(.navigation-active) #potree-render-area {
-  pointer-events: none;
+#potree-navigation-shield {
+  z-index: 3;
 }
 
 #potree-enable-navigation {
@@ -138,8 +145,8 @@ model-viewer,
   background: rgba(248, 248, 248, 0.9);
 }
 
-#potree-viewer.navigation-active #potree-enable-navigation,
-#potree-viewer:not([data-status="loaded"]) #potree-enable-navigation {
+#potree-viewer.navigation-active #potree-navigation-shield,
+#potree-viewer:not([data-status="loaded"]) #potree-navigation-shield {
   display: none;
 }
 
@@ -165,7 +172,7 @@ model-viewer,
 }
 
 @media (max-width: 600px) {
-  body {
+  .page-shell {
     margin-top: 24px;
   }
 

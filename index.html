@@ -84,15 +84,16 @@
   </script>
 </head>
 <body>
-  <header class="site-header">
-    <img src="https://hackeriet.no/comotion-sjn-transparent-1.2.svg" id="logo" alt="Hackeriet" decoding="async">
-    <nav class="site-links" aria-label="Site links">
-      <a href="https://hackeriet.no/" class="sm-ln">Hackeriet</a>
-      <a href="https://github.com/hackeriet/hackeriet-model-3d" class="sm-ln">GitHub</a>
-    </nav>
-  </header>
+  <div class="page-shell">
+    <header class="site-header">
+      <img src="https://hackeriet.no/comotion-sjn-transparent-1.2.svg" id="logo" alt="Hackeriet" decoding="async">
+      <nav class="site-links" aria-label="Site links">
+        <a href="https://hackeriet.no/" class="sm-ln">Hackeriet</a>
+        <a href="https://github.com/hackeriet/hackeriet-model-3d" class="sm-ln">GitHub</a>
+      </nav>
+    </header>
 
-  <main>
+    <main>
     <h1>Hackeriet 3D model <span class="flag progress-pride" aria-hidden="true"></span></h1>
 
     <p>
@@ -131,7 +132,9 @@
       <section id="viewer-potree" data-viewer-panel="potree" aria-label="Point cloud viewer" hidden>
         <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
           <div id="potree-render-area"></div>
-          <button type="button" id="potree-enable-navigation" aria-controls="potree-viewer">Enable navigation</button>
+          <div id="potree-navigation-shield">
+            <button type="button" id="potree-enable-navigation" aria-controls="potree-viewer">Enable navigation</button>
+          </div>
           <p class="viewer-message" role="status" aria-live="polite">Loading point cloud...</p>
         </div>
       </section>
@@ -146,7 +149,8 @@
       <li><a href="ceilingcolorplan.pdf" type="application/pdf">Ceiling color plan PDF</a></li>
       <li><a href="xyz/cloud.xyz.xz" type="application/x-xz">Compressed source point cloud</a></li>
     </ul>
-  </main>
+    </main>
+  </div>
 
   <script src="potree/libs/jquery/jquery-3.1.1.min.js"></script>
   <script src="potree/libs/spectrum/spectrum.js"></script>
