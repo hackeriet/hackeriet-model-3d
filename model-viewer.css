@@ -1,5 +1,14 @@
+html {
+  overflow-y: scroll;
+}
+
 body {
+  position: static;
+  width: auto;
+  height: auto;
+  min-height: 100%;
   margin: 40px auto;
+  overflow: visible;
   max-width: 960px;
   line-height: 1.6em;
   font-family: 'Roboto', sans-serif;
@@ -50,6 +59,12 @@ a {
   color: inherit;
 }
 
+button,
+select {
+  font: inherit;
+  font-size: 12pt;
+}
+
 .viewer-controls {
   clear: both;
   display: flex;
@@ -59,15 +74,9 @@ a {
   gap: 0.5em;
 }
 
-.viewer-controls label {
-  margin-right: 0;
-}
-
 .viewer-controls select,
 .viewer-controls button,
 #potree-enable-navigation {
-  font: inherit;
-  font-size: 12pt;
   color: inherit;
   background: transparent;
   border: 2px solid #C0C0C0;
@@ -130,7 +139,7 @@ model-viewer,
 }
 
 #potree-viewer.navigation-active #potree-enable-navigation,
-#potree-viewer[data-status="loading"] #potree-enable-navigation {
+#potree-viewer:not([data-status="loaded"]) #potree-enable-navigation {
   display: none;
 }
 

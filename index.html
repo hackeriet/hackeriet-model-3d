@@ -2,9 +2,30 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="description" content="Interactive 3D scan and point cloud of Hackeriet, a hackerspace in Oslo.">
+  <meta name="robots" content="index, follow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#22272e" media="(prefers-color-scheme: dark)">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://hackeriet.no; img-src 'self' https://hackeriet.no data: blob:; font-src 'self' https://hackeriet.no; connect-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests">
+
   <title>Hackeriet 3D model</title>
-  <meta name="description" content="Interactive 3D scan of Hackeriet in Oslo.">
+  <link rel="canonical" href="https://hackeriet.github.io/hackeriet-model-3d/">
+  <link rel="license" href="LICENSE">
+  <link rel="preconnect" href="https://hackeriet.no">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="alternate" type="model/gltf-binary" href="hackeriet-model.glb" title="Hackeriet GLB model">
+  <link rel="alternate" type="application/json" href="pointclouds/hackeriet-potree/metadata.json" title="Hackeriet Potree point cloud metadata">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Hackeriet">
+  <meta property="og:title" content="Hackeriet 3D model">
+  <meta property="og:description" content="Interactive 3D scan and point cloud of Hackeriet, a hackerspace in Oslo.">
+  <meta property="og:url" content="https://hackeriet.github.io/hackeriet-model-3d/">
+  <meta name="twitter:card" content="summary">
+
   <link href="https://hackeriet.no/css/font-roboto.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="potree/libs/jquery-ui/jquery-ui.min.css">
   <link rel="stylesheet" href="potree/libs/openlayers3/ol.css">
@@ -12,66 +33,120 @@
   <link rel="stylesheet" href="potree/libs/jstree/themes/mixed/style.css">
   <link rel="stylesheet" href="potree/build/potree/potree.css">
   <link rel="stylesheet" href="model-viewer.css">
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script
+    type="module"
+    src="https://unpkg.com/@google/model-viewer@4.3.1/dist/model-viewer.min.js"
+    integrity="sha384-cprcVQt7wbUl0xngF3PGP6yBB7n4/t+4AoAMG9biiMCGFiWOdzUH10Ie2COTqFNW"
+    crossorigin="anonymous"></script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DigitalDocument",
+      "name": "Hackeriet 3D model",
+      "description": "Interactive 3D scan and point cloud of Hackeriet, a hackerspace in Oslo.",
+      "url": "https://hackeriet.github.io/hackeriet-model-3d/",
+      "license": "https://github.com/hackeriet/hackeriet-model-3d/blob/master/LICENSE",
+      "isPartOf": {
+        "@type": "WebSite",
+        "name": "Hackeriet",
+        "url": "https://hackeriet.no/"
+      },
+      "about": {
+        "@type": "Place",
+        "name": "Hackeriet",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Oslo",
+          "addressCountry": "NO"
+        }
+      },
+      "encoding": [
+        {
+          "@type": "MediaObject",
+          "name": "GLB model",
+          "contentUrl": "https://hackeriet.github.io/hackeriet-model-3d/hackeriet-model.glb",
+          "encodingFormat": "model/gltf-binary"
+        },
+        {
+          "@type": "MediaObject",
+          "name": "Potree point cloud metadata",
+          "contentUrl": "https://hackeriet.github.io/hackeriet-model-3d/pointclouds/hackeriet-potree/metadata.json",
+          "encodingFormat": "application/json"
+        },
+        {
+          "@type": "MediaObject",
+          "name": "Compressed source point cloud",
+          "contentUrl": "https://hackeriet.github.io/hackeriet-model-3d/xyz/cloud.xyz.xz",
+          "encodingFormat": "application/x-xz"
+        }
+      ]
+    }
+  </script>
 </head>
 <body>
-  <img src="https://hackeriet.no/comotion-sjn-transparent-1.2.svg" id="logo" alt="Hackeriet">
-  <a href="https://hackeriet.no/" class="sm-ln">Hackeriet</a>
-  <a href="https://github.com/hackeriet/hackeriet-model-3d" class="sm-ln">GitHub</a>
+  <header class="site-header">
+    <img src="https://hackeriet.no/comotion-sjn-transparent-1.2.svg" id="logo" alt="Hackeriet" decoding="async">
+    <nav class="site-links" aria-label="Site links">
+      <a href="https://hackeriet.no/" class="sm-ln">Hackeriet</a>
+      <a href="https://github.com/hackeriet/hackeriet-model-3d" class="sm-ln">GitHub</a>
+    </nav>
+  </header>
 
-  <h1>Hackeriet 3D model <div class="flag progress-pride"></div></h1>
+  <main>
+    <h1>Hackeriet 3D model <span class="flag progress-pride" aria-hidden="true"></span></h1>
 
-  <p>
-    An interactive 3D scan of Hackeriet, a hackerspace in Oslo.
-  </p>
+    <p>
+      An interactive 3D scan of Hackeriet, a hackerspace in Oslo.
+    </p>
 
-  <p class="viewer-controls">
-    <label for="viewer-select">Viewer:</label>
-    <select id="viewer-select">
-      <option value="mesh">Textured mesh</option>
-      <option value="potree">Point cloud</option>
-    </select>
-    <label for="navigation-select">Navigation:</label>
-    <select id="navigation-select">
-      <option value="walk">Walk</option>
-      <option value="orbit">Orbit</option>
-      <option value="fly">Fly</option>
-    </select>
-    <button type="button" id="toggle-navigation" aria-pressed="false">Enable navigation</button>
-    <button type="button" id="reset-view">Reset view</button>
-  </p>
+    <div class="viewer-controls" role="group" aria-label="Viewer controls">
+      <label for="viewer-select">Viewer:</label>
+      <select id="viewer-select" aria-controls="viewer-mesh viewer-potree">
+        <option value="mesh">Textured mesh</option>
+        <option value="potree">Point cloud</option>
+      </select>
+      <label for="navigation-select">Navigation:</label>
+      <select id="navigation-select" aria-controls="potree-viewer">
+        <option value="walk">Walk</option>
+        <option value="orbit">Orbit</option>
+        <option value="fly">Fly</option>
+      </select>
+      <button type="button" id="toggle-navigation" aria-controls="potree-viewer" aria-pressed="false">Enable navigation</button>
+      <button type="button" id="reset-view" aria-controls="potree-viewer">Reset view</button>
+    </div>
 
-  <div class="viewer-wrap">
-    <section data-viewer-panel="mesh">
-      <model-viewer
-        src="hackeriet-model.glb"
-        alt="A 3D scan of Hackeriet in Oslo"
-        camera-controls
-        touch-action="pan-y"
-        shadow-intensity="0.7"
-        exposure="1"
-        environment-image="neutral">
-      </model-viewer>
-    </section>
+    <div class="viewer-wrap">
+      <section id="viewer-mesh" data-viewer-panel="mesh" aria-label="Textured mesh viewer">
+        <model-viewer
+          src="hackeriet-model.glb"
+          alt="A 3D scan of Hackeriet in Oslo"
+          camera-controls
+          touch-action="pan-y"
+          shadow-intensity="0.7"
+          exposure="1"
+          environment-image="neutral">
+        </model-viewer>
+      </section>
 
-    <section data-viewer-panel="potree" hidden>
-      <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
-        <div id="potree-render-area"></div>
-        <button type="button" id="potree-enable-navigation">Enable navigation</button>
-        <p class="viewer-message">Loading point cloud...</p>
-      </div>
-    </section>
-  </div>
+      <section id="viewer-potree" data-viewer-panel="potree" aria-label="Point cloud viewer" hidden>
+        <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
+          <div id="potree-render-area"></div>
+          <button type="button" id="potree-enable-navigation" aria-controls="potree-viewer">Enable navigation</button>
+          <p class="viewer-message" role="status" aria-live="polite">Loading point cloud...</p>
+        </div>
+      </section>
+    </div>
 
-  <h2>Files</h2>
-  <ul class="resources">
-    <li><a href="hackeriet-model.glb">GLB model</a></li>
-    <li><a href="pointclouds/hackeriet-potree/metadata.json">Potree point cloud metadata</a></li>
-    <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj">Original OBJ</a></li>
-    <li><a href="colorplan.pdf">Color plan PDF</a></li>
-    <li><a href="ceilingcolorplan.pdf">Ceiling color plan PDF</a></li>
-    <li><a href="xyz/cloud.xyz.xz">Compressed source point cloud</a></li>
-  </ul>
+    <h2>Files</h2>
+    <ul class="resources">
+      <li><a href="hackeriet-model.glb" type="model/gltf-binary">GLB model</a></li>
+      <li><a href="pointclouds/hackeriet-potree/metadata.json" type="application/json">Potree point cloud metadata</a></li>
+      <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj" type="text/plain">Original OBJ</a></li>
+      <li><a href="colorplan.pdf" type="application/pdf">Color plan PDF</a></li>
+      <li><a href="ceilingcolorplan.pdf" type="application/pdf">Ceiling color plan PDF</a></li>
+      <li><a href="xyz/cloud.xyz.xz" type="application/x-xz">Compressed source point cloud</a></li>
+    </ul>
+  </main>
 
   <script src="potree/libs/jquery/jquery-3.1.1.min.js"></script>
   <script src="potree/libs/spectrum/spectrum.js"></script>

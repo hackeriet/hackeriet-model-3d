@@ -1,151 +1,166 @@
-const viewerSelect = document.querySelector('#viewer-select');
-const navigationSelect = document.querySelector('#navigation-select');
-const toggleNavigationButton = document.querySelector('#toggle-navigation');
-const overlayNavigationButton = document.querySelector('#potree-enable-navigation');
-const resetViewButton = document.querySelector('#reset-view');
-const panels = document.querySelectorAll('[data-viewer-panel]');
+(() => {
+  const elements = {
+    viewerSelect: document.querySelector('#viewer-select'),
+    navigationSelect: document.querySelector('#navigation-select'),
+    toggleNavigationButton: document.querySelector('#toggle-navigation'),
+    overlayNavigationButton: document.querySelector('#potree-enable-navigation'),
+    resetViewButton: document.querySelector('#reset-view'),
+    panels: document.querySelectorAll('[data-viewer-panel]'),
+  };
 
-const defaultView = {
-  position: [-6.3, -17.5, 3.8],
-  target: [-6.3, -1.0, 3.2],
-  moveSpeed: 1.2,
-};
+  const initialView = {
+    position: [-6.3, -12.5, 3.6],
+    target: [-6.3, 4.0, 3.0],
+  };
 
-let potreeStarted = false;
-let potreeViewer = null;
-let potreeHost = null;
-let navigationEnabled = false;
+  const moveSpeeds = {
+    walk: 0.8,
+    fly: 0.9,
+    orbit: 0.8,
+  };
 
-viewerSelect.addEventListener('change', () => {
-  showViewer(viewerSelect.value);
-});
+  const state = {
+    navigationEnabled: false,
+    potreeStarted: false,
+    potreeViewer: null,
+    potreeHost: null,
+  };
 
-navigationSelect.addEventListener('change', () => {
-  applyNavigationMode(navigationSelect.value);
-});
+  elements.viewerSelect.addEventListener('change', () => {
+    showViewer(elements.viewerSelect.value);
+  });
 
-toggleNavigationButton.addEventListener('click', () => {
-  setNavigationEnabled(!navigationEnabled);
-});
+  elements.navigationSelect.addEventListener('change', () => {
+    applyNavigationMode(elements.navigationSelect.value);
+  });
 
-overlayNavigationButton.addEventListener('click', () => {
-  setNavigationEnabled(true);
-});
+  elements.toggleNavigationButton.addEventListener('click', () => {
+    setNavigationEnabled(!state.navigationEnabled);
+  });
 
-resetViewButton.addEventListener('click', () => {
-  resetPotreeView();
-});
+  elements.overlayNavigationButton.addEventListener('click', () => {
+    setNavigationEnabled(true);
+  });
 
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape' && navigationEnabled) {
-    setNavigationEnabled(false);
-  }
-});
+  elements.resetViewButton.addEventListener('click', resetPotreeView);
 
-const initialViewer = new URLSearchParams(window.location.search).get('viewer');
-if (initialViewer === 'potree' || initialViewer === 'point-cloud') {
-  viewerSelect.value = 'potree';
-}
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape' && state.navigationEnabled) {
+      setNavigationEnabled(false);
+    }
+  });
 
-showViewer(viewerSelect.value);
-
-function showViewer(selected) {
-  for (const panel of panels) {
-    panel.hidden = panel.dataset.viewerPanel !== selected;
-  }
-
-  const pointCloudSelected = selected === 'potree';
-  navigationSelect.disabled = !pointCloudSelected;
-  toggleNavigationButton.disabled = !pointCloudSelected;
-  resetViewButton.disabled = !pointCloudSelected;
-
-  if (!pointCloudSelected) {
-    setNavigationEnabled(false);
-    return;
+  const initialViewer = new URLSearchParams(window.location.search).get('viewer');
+  if (initialViewer === 'potree' || initialViewer === 'point-cloud') {
+    elements.viewerSelect.value = 'potree';
   }
 
-  if (!potreeStarted) {
-    potreeStarted = true;
-    startPotreeViewer();
+  showViewer(elements.viewerSelect.value);
+
+  function showViewer(selectedViewer) {
+    for (const panel of elements.panels) {
+      panel.hidden = panel.dataset.viewerPanel !== selectedViewer;
+    }
+
+    const isPointCloud = selectedViewer === 'potree';
+    setPointCloudControlsEnabled(isPointCloud);
+
+    if (!isPointCloud) {
+      setNavigationEnabled(false);
+      return;
+    }
+
+    if (!state.potreeStarted) {
+      state.potreeStarted = true;
+      startPotreeViewer();
+    }
   }
-}
 
-function startPotreeViewer() {
-  potreeHost = document.querySelector('#potree-viewer');
-  const source = potreeHost.dataset.source;
-  const message = potreeHost.querySelector('.viewer-message');
-  const renderArea = document.querySelector('#potree-render-area');
+  function setPointCloudControlsEnabled(enabled) {
+    elements.navigationSelect.disabled = !enabled;
+    elements.toggleNavigationButton.disabled = !enabled;
+    elements.resetViewButton.disabled = !enabled;
+  }
 
-  try {
-    potreeHost.dataset.status = 'loading';
+  function startPotreeViewer() {
+    state.potreeHost = document.querySelector('#potree-viewer');
+    const source = state.potreeHost.dataset.source;
+    const message = state.potreeHost.querySelector('.viewer-message');
+    const renderArea = document.querySelector('#potree-render-area');
 
-    const viewer = new Potree.Viewer(renderArea);
-    potreeViewer = viewer;
-    window.potreeViewer = viewer;
+    try {
+      state.potreeHost.dataset.status = 'loading';
+      state.potreeViewer = new Potree.Viewer(renderArea);
+      configurePotreeViewer(state.potreeViewer);
 
+      Potree.loadPointCloud(source, 'Hackeriet', event => {
+        configurePointCloud(event.pointcloud);
+        state.potreeViewer.scene.addPointCloud(event.pointcloud);
+        resetPotreeView();
+        message.remove();
+        state.potreeHost.dataset.status = 'loaded';
+      });
+    } catch (error) {
+      state.potreeHost.dataset.status = 'error';
+      message.textContent = `Could not start Potree viewer: ${error.message || error}`;
+    }
+  }
+
+  function configurePotreeViewer(viewer) {
     viewer.setEDLEnabled(true);
     viewer.setFOV(65);
     viewer.setPointBudget(3_000_000);
     viewer.setBackground('gradient');
     viewer.loadSettingsFromURL();
-
-    Potree.loadPointCloud(source, 'Hackeriet', event => {
-      const pointcloud = event.pointcloud;
-      const material = pointcloud.material;
-
-      material.activeAttributeName = 'rgba';
-      material.size = 0.8;
-      material.minSize = 1.5;
-      material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-      material.shape = Potree.PointShape.SQUARE;
-
-      viewer.scene.addPointCloud(pointcloud);
-      applyNavigationMode(navigationSelect.value);
-      resetPotreeView();
-      message.remove();
-      potreeHost.dataset.status = 'loaded';
-    });
-  } catch (error) {
-    potreeHost.dataset.status = 'error';
-    message.textContent = `Could not start Potree viewer: ${error.message || error}`;
-  }
-}
-
-function applyNavigationMode(mode) {
-  if (!potreeViewer) {
-    return;
   }
 
-  if (mode === 'orbit') {
-    potreeViewer.setControls(potreeViewer.orbitControls);
-    potreeViewer.setMoveSpeed(defaultView.moveSpeed);
-    return;
+  function configurePointCloud(pointcloud) {
+    const material = pointcloud.material;
+
+    material.activeAttributeName = 'rgba';
+    material.size = 0.8;
+    material.minSize = 1.5;
+    material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
+    material.shape = Potree.PointShape.SQUARE;
   }
 
-  potreeViewer.setControls(potreeViewer.fpControls);
-  potreeViewer.fpControls.lockElevation = mode !== 'fly';
-  potreeViewer.setMoveSpeed(mode === 'fly' ? 2.2 : defaultView.moveSpeed);
-}
+  function applyNavigationMode(mode) {
+    const viewer = state.potreeViewer;
+    if (!viewer) {
+      return;
+    }
 
-function resetPotreeView() {
-  if (!potreeViewer) {
-    return;
+    if (mode === 'orbit') {
+      viewer.setControls(viewer.orbitControls);
+      viewer.setMoveSpeed(moveSpeeds.orbit);
+      return;
+    }
+
+    viewer.setControls(viewer.fpControls);
+    viewer.fpControls.lockElevation = mode !== 'fly';
+    viewer.setMoveSpeed(mode === 'fly' ? moveSpeeds.fly : moveSpeeds.walk);
   }
 
-  const view = potreeViewer.scene.view;
-  view.position.set(...defaultView.position);
-  view.lookAt(...defaultView.target);
-  potreeViewer.setMoveSpeed(defaultView.moveSpeed);
-  applyNavigationMode(navigationSelect.value);
-}
+  function resetPotreeView() {
+    const viewer = state.potreeViewer;
+    if (!viewer) {
+      return;
+    }
 
-function setNavigationEnabled(enabled) {
-  navigationEnabled = enabled && viewerSelect.value === 'potree';
-
-  if (potreeHost) {
-    potreeHost.classList.toggle('navigation-active', navigationEnabled);
+    const view = viewer.scene.view;
+    view.position.set(...initialView.position);
+    view.lookAt(...initialView.target);
+    applyNavigationMode(elements.navigationSelect.value);
   }
 
-  toggleNavigationButton.textContent = navigationEnabled ? 'Release scroll' : 'Enable navigation';
-  toggleNavigationButton.setAttribute('aria-pressed', String(navigationEnabled));
-}
+  function setNavigationEnabled(enabled) {
+    state.navigationEnabled = enabled && elements.viewerSelect.value === 'potree';
+
+    if (state.potreeHost) {
+      state.potreeHost.classList.toggle('navigation-active', state.navigationEnabled);
+    }
+
+    elements.toggleNavigationButton.textContent = state.navigationEnabled ? 'Release scroll' : 'Enable navigation';
+    elements.toggleNavigationButton.setAttribute('aria-pressed', String(state.navigationEnabled));
+  }
+})();
