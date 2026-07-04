@@ -1,26 +1,22 @@
 # Hackeriet 3D model
 
-This repository publishes an interactive 3D scan of Hackeriet in Oslo as a static GitHub Pages site:
+This repository publishes an interactive point-cloud scan of Hackeriet in Oslo as a static GitHub Pages site:
 
 https://hackeriet.github.io/hackeriet-model-3d/
 
-The site exposes two browser views over the same scan material:
-
-- A textured mesh view using `<model-viewer>` and `hackeriet-model.glb`.
-- A point-cloud view using Potree 1.8.2 assets generated from `xyz/cloud.xyz.xz`.
+The public viewer is Potree-based. Earlier revisions also exposed a textured mesh through `<model-viewer>`, but that path was removed because the mesh viewer was less reliable, had poorer navigation for an indoor scan, and duplicated maintenance effort without matching the point-cloud viewer's usefulness.
 
 There is no application server and no build step in the live deployment path. GitHub Pages serves the files in `master` directly from the repository root.
 
 ## Repository architecture
 
 ```text
-index.html                         Static page shell, metadata, viewer controls, script loading
-model-viewer.css                   Site styling and overrides for Potree's global CSS
+index.html                         Static page shell, metadata, controls, Potree script loading
+site.css                   Site styling and overrides for Potree's global CSS
 potree-viewer.js                   Potree bootstrapping, point-cloud material, camera, navigation state
-hackeriet-model.glb                Browser-friendly textured mesh artifact
-obj/                               Original OBJ/MTL mesh and texture images
+obj/                               Original OBJ/MTL mesh and texture images from the scan export
 xyz/cloud.xyz.xz                   Original compressed XYZ+RGB point-cloud source
-pointclouds/hackeriet-potree/      Potree 2.0 point-cloud output
+pointclouds/hackeriet-potree/      Potree 2.0 point-cloud output used by the web viewer
 potree/                            Vendored Potree viewer runtime and runtime dependencies
 colorplan.pdf                      Original floor/color plan source document
 ceilingcolorplan.pdf               Original ceiling/color plan source document
@@ -29,7 +25,6 @@ ceilingcolorplan.pdf               Original ceiling/color plan source document
 Approximate artifact sizes at the time of writing:
 
 ```text
-hackeriet-model.glb             41M
 obj/                            61M
 xyz/cloud.xyz.xz                59M
 pointclouds/hackeriet-potree/   49M
@@ -39,31 +34,17 @@ colorplan.pdf                  1.2M
 ceilingcolorplan.pdf           576K
 ```
 
-The repository is intentionally artifact-heavy. The deployed site is static, so the generated GLB, Potree hierarchy, Potree octree, and vendored runtime are all committed.
+The repository is intentionally artifact-heavy. The deployed site is static, so the generated Potree hierarchy, Potree octree, and vendored runtime are all committed.
 
 ## Runtime model
 
 `index.html` is the only page. It has three main responsibilities:
 
-1. Provide normal document metadata for browsers, search engines, link previews, and structured-data consumers.
-2. Present a small UI for selecting either the textured mesh or the Potree point cloud.
-3. Load the static viewer runtimes and `potree-viewer.js`.
+1. Provide document metadata for browsers, search engines, link previews, and structured-data consumers.
+2. Present controls for Potree navigation mode and navigation capture/release.
+3. Load the static Potree runtime and `potree-viewer.js`.
 
-The textured mesh path is simple:
-
-```text
-index.html -> <model-viewer> -> hackeriet-model.glb
-```
-
-`<model-viewer>` is loaded from a pinned CDN URL:
-
-```html
-https://unpkg.com/@google/model-viewer@4.3.1/dist/model-viewer.min.js
-```
-
-The script tag includes an SRI hash and `crossorigin="anonymous"` so the dependency is stable and tamper-evident from the browser's point of view.
-
-The point-cloud path is:
+The runtime fetch path is:
 
 ```text
 index.html
@@ -75,7 +56,7 @@ index.html
   -> potree/build/potree/workers/2.0/DecoderWorker_brotli.js
 ```
 
-`potree-viewer.js` lazy-starts the Potree viewer when the point-cloud panel is selected. It configures:
+`potree-viewer.js` starts the Potree viewer on page load. It configures:
 
 - EDL rendering enabled.
 - 65 degree field of view.
@@ -91,7 +72,7 @@ The point cloud is passive by default. The Potree canvas is covered by `#potree-
 
 Potree's bundled CSS includes global document rules intended for fullscreen Potree applications, including a `body` rule with `position: absolute`, `height: 100%`, and `overflow: hidden`. That breaks ordinary document scrolling on this static page.
 
-`model-viewer.css` deliberately neutralizes those global assumptions:
+`site.css` deliberately neutralizes those global assumptions:
 
 - `html, body` are restored as normal scroll containers.
 - `body` is forced back to `position: static`, automatic width, automatic height, zero margin, and zero padding.
@@ -183,16 +164,17 @@ The `potree/` directory contains the browser runtime needed by the generated Pot
 Keep these two facts in mind when editing it:
 
 - `potree/build/potree/potree.js` and `potree/build/potree/potree.css` are upstream/vendor files.
-- Local behavior should normally be implemented in `potree-viewer.js` or `model-viewer.css`, not by editing vendored Potree files.
+- Local behavior should normally be implemented in `potree-viewer.js` or `site.css`, not by editing vendored Potree files.
 
 The current vendored runtime has about 55 files under `potree/`, plus the generated point cloud under `pointclouds/`.
 
 ## Navigation behavior
 
-The point-cloud viewer has two separate controls:
+The point-cloud viewer has three navigation modes:
 
-- Viewer selection: textured mesh or point cloud.
-- Navigation mode: walk, orbit, or fly.
+- `walk`: first-person movement with elevation locked.
+- `fly`: first-person movement with vertical movement allowed.
+- `orbit`: orbit controls around the current view target.
 
 The page starts with point-cloud navigation disabled so the page remains scrollable. Enabling navigation removes the overlay shield and lets Potree receive pointer and wheel events. Pressing `Escape` releases navigation again.
 
@@ -222,7 +204,6 @@ If navigation feels wrong, tune these values first. Avoid editing Potree interna
 `index.html` includes a conservative `Content-Security-Policy` meta tag. It is intentionally compatible with the current static deployment and Potree runtime, including:
 
 - Local scripts and vendored Potree workers.
-- The pinned `<model-viewer>` CDN dependency.
 - Inline JSON-LD and the current inline CSP-compatible page metadata.
 - Potree's need for workers and WebGL-related blob/data resources.
 
@@ -231,8 +212,8 @@ The page also includes:
 - Canonical URL.
 - Open Graph metadata.
 - Twitter summary card metadata.
-- JSON-LD describing the digital document, Hackeriet as the subject, and the main model/point-cloud encodings.
-- `rel=alternate` links for the GLB model and Potree metadata.
+- JSON-LD describing the digital document, Hackeriet as the subject, and the main point-cloud encodings.
+- `rel=alternate` link for the Potree metadata.
 
 Because GitHub Pages serves this as static HTML, HTTP headers such as CSP headers or `Link` headers are not controlled by this repository unless deployment moves away from stock GitHub Pages.
 
@@ -248,7 +229,6 @@ Then open:
 
 ```text
 http://127.0.0.1:8123/
-http://127.0.0.1:8123/?viewer=potree
 ```
 
 Useful checks before pushing:
@@ -258,7 +238,7 @@ node --check potree-viewer.js
 git diff --check
 ```
 
-A useful browser smoke test is to load `/?viewer=potree` and confirm the `#potree-viewer` element reaches:
+A useful browser smoke test is to load the page and confirm the `#potree-viewer` element reaches:
 
 ```html
 data-status="loaded"
@@ -287,9 +267,8 @@ gh api repos/hackeriet/hackeriet-model-3d/pages/builds/latest
 
 ## Maintenance guidelines
 
-- Keep source artifacts and generated artifacts distinct. `xyz/` and `obj/` are source material; `hackeriet-model.glb` and `pointclouds/hackeriet-potree/` are browser/deployment artifacts.
-- Prefer changes in `index.html`, `model-viewer.css`, and `potree-viewer.js` over edits to vendored Potree files.
+- Keep source artifacts and generated artifacts distinct. `xyz/` and `obj/` are source material; `pointclouds/hackeriet-potree/` is the browser/deployment artifact.
+- Prefer changes in `index.html`, `site.css`, and `potree-viewer.js` over edits to vendored Potree files.
 - If updating Potree, test page scrolling specifically. Potree's upstream CSS is designed for fullscreen apps and can easily break normal document flow.
-- If updating `<model-viewer>`, pin the version and update the SRI hash.
 - If regenerating the point cloud, preserve the stable URL `pointclouds/hackeriet-potree/metadata.json` or update `index.html` accordingly.
 - If adding a build step later, keep GitHub Pages deployment semantics explicit in this README.

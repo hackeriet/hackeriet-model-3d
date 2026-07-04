@@ -1,11 +1,9 @@
 (() => {
   const elements = {
-    viewerSelect: document.querySelector('#viewer-select'),
     navigationSelect: document.querySelector('#navigation-select'),
     toggleNavigationButton: document.querySelector('#toggle-navigation'),
     overlayNavigationButton: document.querySelector('#potree-enable-navigation'),
     resetViewButton: document.querySelector('#reset-view'),
-    panels: document.querySelectorAll('[data-viewer-panel]'),
   };
 
   const initialView = {
@@ -21,14 +19,9 @@
 
   const state = {
     navigationEnabled: false,
-    potreeStarted: false,
     potreeViewer: null,
-    potreeHost: null,
+    potreeHost: document.querySelector('#potree-viewer'),
   };
-
-  elements.viewerSelect.addEventListener('change', () => {
-    showViewer(elements.viewerSelect.value);
-  });
 
   elements.navigationSelect.addEventListener('change', () => {
     applyNavigationMode(elements.navigationSelect.value);
@@ -50,40 +43,9 @@
     }
   });
 
-  const initialViewer = new URLSearchParams(window.location.search).get('viewer');
-  if (initialViewer === 'potree' || initialViewer === 'point-cloud') {
-    elements.viewerSelect.value = 'potree';
-  }
-
-  showViewer(elements.viewerSelect.value);
-
-  function showViewer(selectedViewer) {
-    for (const panel of elements.panels) {
-      panel.hidden = panel.dataset.viewerPanel !== selectedViewer;
-    }
-
-    const isPointCloud = selectedViewer === 'potree';
-    setPointCloudControlsEnabled(isPointCloud);
-
-    if (!isPointCloud) {
-      setNavigationEnabled(false);
-      return;
-    }
-
-    if (!state.potreeStarted) {
-      state.potreeStarted = true;
-      startPotreeViewer();
-    }
-  }
-
-  function setPointCloudControlsEnabled(enabled) {
-    elements.navigationSelect.disabled = !enabled;
-    elements.toggleNavigationButton.disabled = !enabled;
-    elements.resetViewButton.disabled = !enabled;
-  }
+  startPotreeViewer();
 
   function startPotreeViewer() {
-    state.potreeHost = document.querySelector('#potree-viewer');
     const source = state.potreeHost.dataset.source;
     const message = state.potreeHost.querySelector('.viewer-message');
     const renderArea = document.querySelector('#potree-render-area');
@@ -154,12 +116,8 @@
   }
 
   function setNavigationEnabled(enabled) {
-    state.navigationEnabled = enabled && elements.viewerSelect.value === 'potree';
-
-    if (state.potreeHost) {
-      state.potreeHost.classList.toggle('navigation-active', state.navigationEnabled);
-    }
-
+    state.navigationEnabled = enabled;
+    state.potreeHost.classList.toggle('navigation-active', state.navigationEnabled);
     elements.toggleNavigationButton.textContent = state.navigationEnabled ? 'Release scroll' : 'Enable navigation';
     elements.toggleNavigationButton.setAttribute('aria-pressed', String(state.navigationEnabled));
   }

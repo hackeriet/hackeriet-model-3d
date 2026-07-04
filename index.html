@@ -9,14 +9,12 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#22272e" media="(prefers-color-scheme: dark)">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://hackeriet.no; img-src 'self' https://hackeriet.no data: blob:; font-src 'self' https://hackeriet.no; connect-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://hackeriet.no; img-src 'self' https://hackeriet.no data: blob:; font-src 'self' https://hackeriet.no; connect-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests">
 
   <title>Hackeriet 3D model</title>
   <link rel="canonical" href="https://hackeriet.github.io/hackeriet-model-3d/">
   <link rel="license" href="LICENSE">
   <link rel="preconnect" href="https://hackeriet.no">
-  <link rel="preconnect" href="https://unpkg.com">
-  <link rel="alternate" type="model/gltf-binary" href="hackeriet-model.glb" title="Hackeriet GLB model">
   <link rel="alternate" type="application/json" href="pointclouds/hackeriet-potree/metadata.json" title="Hackeriet Potree point cloud metadata">
 
   <meta property="og:type" content="website">
@@ -32,12 +30,7 @@
   <link rel="stylesheet" href="potree/libs/spectrum/spectrum.css">
   <link rel="stylesheet" href="potree/libs/jstree/themes/mixed/style.css">
   <link rel="stylesheet" href="potree/build/potree/potree.css">
-  <link rel="stylesheet" href="model-viewer.css">
-  <script
-    type="module"
-    src="https://unpkg.com/@google/model-viewer@4.3.1/dist/model-viewer.min.js"
-    integrity="sha384-cprcVQt7wbUl0xngF3PGP6yBB7n4/t+4AoAMG9biiMCGFiWOdzUH10Ie2COTqFNW"
-    crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="site.css">
   <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -61,12 +54,6 @@
         }
       },
       "encoding": [
-        {
-          "@type": "MediaObject",
-          "name": "GLB model",
-          "contentUrl": "https://hackeriet.github.io/hackeriet-model-3d/hackeriet-model.glb",
-          "encodingFormat": "model/gltf-binary"
-        },
         {
           "@type": "MediaObject",
           "name": "Potree point cloud metadata",
@@ -100,12 +87,7 @@
       An interactive 3D scan of Hackeriet, a hackerspace in Oslo.
     </p>
 
-    <div class="viewer-controls" role="group" aria-label="Viewer controls">
-      <label for="viewer-select">Viewer:</label>
-      <select id="viewer-select" aria-controls="viewer-mesh viewer-potree">
-        <option value="mesh">Textured mesh</option>
-        <option value="potree">Point cloud</option>
-      </select>
+    <div class="viewer-controls" role="group" aria-label="Point cloud controls">
       <label for="navigation-select">Navigation:</label>
       <select id="navigation-select" aria-controls="potree-viewer">
         <option value="walk">Walk</option>
@@ -117,19 +99,7 @@
     </div>
 
     <div class="viewer-wrap">
-      <section id="viewer-mesh" data-viewer-panel="mesh" aria-label="Textured mesh viewer">
-        <model-viewer
-          src="hackeriet-model.glb"
-          alt="A 3D scan of Hackeriet in Oslo"
-          camera-controls
-          touch-action="pan-y"
-          shadow-intensity="0.7"
-          exposure="1"
-          environment-image="neutral">
-        </model-viewer>
-      </section>
-
-      <section id="viewer-potree" data-viewer-panel="potree" aria-label="Point cloud viewer" hidden>
+      <section id="viewer-potree" aria-label="Point cloud viewer">
         <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
           <div id="potree-render-area"></div>
           <div id="potree-navigation-shield">
@@ -142,7 +112,6 @@
 
     <h2>Files</h2>
     <ul class="resources">
-      <li><a href="hackeriet-model.glb" type="model/gltf-binary">GLB model</a></li>
       <li><a href="pointclouds/hackeriet-potree/metadata.json" type="application/json">Potree point cloud metadata</a></li>
       <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj" type="text/plain">Original OBJ</a></li>
       <li><a href="colorplan.pdf" type="application/pdf">Color plan PDF</a></li>
