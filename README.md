@@ -65,6 +65,7 @@ index.html
 - Adaptive point rendering with runtime controls for point shape, point size, and minimum point size.
 - A fixed reset/start camera position.
 - Walk, fly, and orbit navigation modes.
+- Viewport aspect-ratio presets for wide, standard, square, and tall layouts.
 - Optional live navigation data for tuning camera position, target, yaw, and pitch.
 - Adjustable detail presets for point budget, minimum node size, and concurrent node loading.
 
@@ -173,6 +174,13 @@ The current vendored runtime has about 55 files under `potree/`, plus the genera
 
 ## Navigation behavior
 
+The page exposes a `Viewport` selector before the viewer. It changes the Potree area only, not the source point cloud:
+
+- `wide`: 16:9.
+- `standard`: 4:3.
+- `square`: 1:1.
+- `tall`: 3:4.
+
 The point-cloud viewer has three navigation modes:
 
 - `walk`: first-person movement with elevation locked.
@@ -191,6 +199,8 @@ Keyboard and mouse controls are handled by Potree's `FirstPersonControls` when n
 - Left drag: look around.
 - Right drag: translate/pan.
 - Double-click: jump toward the clicked point.
+
+Small screens and coarse-pointer devices also show a six-button touch control pad below the viewer. Those buttons translate the current view forward, backward, left, right, up, or down without resetting the camera direction. Holding a button repeats the movement.
 
 The page also exposes a `Detail` selector. It adjusts three Potree loading controls together:
 

@@ -99,6 +99,13 @@
           <option value="high" selected>High</option>
           <option value="maximum">Maximum</option>
         </select>
+        <label for="viewport-size-select">Viewport:</label>
+        <select id="viewport-size-select" aria-controls="potree-viewer">
+          <option value="wide" selected>Wide</option>
+          <option value="standard">Standard</option>
+          <option value="square">Square</option>
+          <option value="tall">Tall</option>
+        </select>
         <label for="point-shape-select">Shape:</label>
         <select id="point-shape-select" aria-controls="potree-viewer">
           <option value="SQUARE">Square</option>
@@ -127,9 +134,10 @@
         With navigation active: W/S move forward/back, A/D move left/right, R/F move up/down.
         Arrow keys mirror WASD, PageUp/PageDown mirror R/F, mouse wheel changes movement speed,
         left-drag looks around, right-drag translates, and double-click jumps toward a point.
+        On small screens, the buttons below the viewer provide coarse movement controls.
       </p>
 
-      <div class="viewer-wrap">
+      <div class="viewer-wrap" data-viewport-size="wide">
         <section id="viewer-potree" aria-label="Point cloud viewer">
           <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
             <div id="potree-render-area"></div>
@@ -141,6 +149,14 @@
             <output id="navigation-data" class="navigation-data" for="show-navigation-data navigation-select reset-view" hidden></output>
           </div>
         </section>
+        <div class="touch-controls" role="group" aria-label="Touch navigation controls">
+          <button type="button" data-move="up">Up</button>
+          <button type="button" data-move="forward">Forward</button>
+          <button type="button" data-move="down">Down</button>
+          <button type="button" data-move="left">Left</button>
+          <button type="button" data-move="backward">Back</button>
+          <button type="button" data-move="right">Right</button>
+        </div>
       </div>
 
       <h2>Files</h2>

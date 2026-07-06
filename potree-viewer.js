@@ -2,6 +2,7 @@
   const elements = {
     navigationSelect: getRequiredElement('#navigation-select'),
     detailSelect: getRequiredElement('#detail-select'),
+    viewportSizeSelect: getRequiredElement('#viewport-size-select'),
     pointShapeSelect: getRequiredElement('#point-shape-select'),
     pointSizeRange: getRequiredElement('#point-size-range'),
     pointSizeValue: getRequiredElement('#point-size-value'),
@@ -14,7 +15,9 @@
     loadingProgress: getRequiredElement('#loading-progress'),
     navigationDataToggle: getRequiredElement('#show-navigation-data'),
     navigationData: getRequiredElement('#navigation-data'),
+    touchMoveButtons: document.querySelectorAll('[data-move]'),
     potreeHost: getRequiredElement('#potree-viewer'),
+    viewerWrap: getRequiredElement('.viewer-wrap'),
     renderArea: getRequiredElement('#potree-render-area'),
   };
 
@@ -53,12 +56,19 @@
     orbit: 0.8,
   };
 
+  const touchMoveStep = 0.45;
+  const touchMoveRepeatDelay = 180;
+  const touchMoveRepeatInterval = 80;
+
   const state = {
     navigationEnabled: true,
     potreeViewer: null,
     pointcloud: null,
     loadingMonitorId: null,
     navigationDataFrameId: null,
+    touchMoveTimerId: null,
+    touchMoveIntervalId: null,
+    ignoreNextTouchClick: false,
   };
 
   elements.navigationSelect.addEventListener('change', () => {
@@ -67,6 +77,10 @@
 
   elements.detailSelect.addEventListener('change', () => {
     applyDetailPreset(elements.detailSelect.value);
+  });
+
+  elements.viewportSizeSelect.addEventListener('change', () => {
+    applyViewportSize(elements.viewportSizeSelect.value);
   });
 
   elements.pointShapeSelect.addEventListener('change', applyPointRenderingControls);
@@ -83,12 +97,34 @@
 
   elements.resetViewButton.addEventListener('click', resetPotreeView);
 
+  elements.touchMoveButtons.forEach(button => {
+    button.addEventListener('pointerdown', event => {
+      event.preventDefault();
+      startTouchMove(button.dataset.move);
+      button.setPointerCapture?.(event.pointerId);
+    });
+
+    button.addEventListener('pointerup', stopTouchMove);
+    button.addEventListener('pointercancel', stopTouchMove);
+    button.addEventListener('lostpointercapture', stopTouchMove);
+
+    button.addEventListener('click', () => {
+      if (state.ignoreNextTouchClick) {
+        state.ignoreNextTouchClick = false;
+        return;
+      }
+
+      applyTouchMove(button.dataset.move);
+    });
+  });
+
   document.addEventListener('keydown', event => {
     if (event.key === 'Escape' && state.navigationEnabled) {
       setNavigationEnabled(false);
     }
   });
 
+  applyViewportSize(elements.viewportSizeSelect.value);
   setNavigationEnabled(state.navigationEnabled);
   startPotreeViewer();
 
@@ -149,6 +185,10 @@
     material.size = size;
     material.minSize = minSize;
     material.shape = pointShapes[elements.pointShapeSelect.value] || Potree.PointShape.SQUARE;
+  }
+
+  function applyViewportSize(size) {
+    elements.viewerWrap.dataset.viewportSize = size;
   }
 
   function applyDetailPreset(name) {
@@ -226,6 +266,70 @@
     viewer.setControls(viewer.fpControls);
     viewer.fpControls.lockElevation = mode !== 'fly';
     viewer.setMoveSpeed(mode === 'fly' ? moveSpeeds.fly : moveSpeeds.walk);
+  }
+
+  function startTouchMove(direction) {
+    stopTouchMove();
+    state.ignoreNextTouchClick = true;
+    window.setTimeout(() => {
+      state.ignoreNextTouchClick = false;
+    }, 500);
+    applyTouchMove(direction);
+
+    state.touchMoveTimerId = window.setTimeout(() => {
+      state.touchMoveIntervalId = window.setInterval(() => {
+        applyTouchMove(direction);
+      }, touchMoveRepeatInterval);
+    }, touchMoveRepeatDelay);
+  }
+
+  function stopTouchMove() {
+    window.clearTimeout(state.touchMoveTimerId);
+    window.clearInterval(state.touchMoveIntervalId);
+    state.touchMoveTimerId = null;
+    state.touchMoveIntervalId = null;
+  }
+
+  function applyTouchMove(directionName) {
+    const viewer = state.potreeViewer;
+    if (!viewer) {
+      return;
+    }
+
+    const view = viewer.scene.view;
+    const delta = getTouchMoveDelta(view, directionName);
+    const target = view.getPivot().add(delta);
+
+    view.position.add(delta);
+    view.lookAt(target);
+    updateNavigationData();
+  }
+
+  function getTouchMoveDelta(view, directionName) {
+    const forward = view.direction.clone();
+    if (elements.navigationSelect.value === 'walk') {
+      forward.z = 0;
+    }
+
+    if (forward.lengthSq() === 0) {
+      forward.set(0, 1, 0);
+    }
+
+    forward.normalize();
+
+    const right = view.getSide().normalize();
+    const up = forward.clone().set(0, 0, 1);
+
+    const directions = {
+      forward,
+      backward: forward.clone().multiplyScalar(-1),
+      left: right.clone().multiplyScalar(-1),
+      right,
+      up,
+      down: up.clone().multiplyScalar(-1),
+    };
+
+    return (directions[directionName] || forward).clone().multiplyScalar(touchMoveStep);
   }
 
   function resetPotreeView() {
