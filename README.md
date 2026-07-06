@@ -209,12 +209,12 @@ The initial point-cloud camera is defined in `potree-viewer.js`:
 
 ```js
 const initialView = {
-  position: [-14.3, 9.0, 1.6],
-  target: [-14.3, -7.5, 1.0],
+  position: [-12.95, 3.55, 1.81],
+  target: [-13.15, 1.20, 1.40],
 };
 ```
 
-This is approximately yaw `180.0` degrees and pitch `-2.1` degrees in Potree's view model. Enable `Show navigation data` on the page to inspect the live position, target, yaw, pitch, radius, and direction while tuning the start view.
+This is approximately yaw `175.2` degrees and pitch `-9.7` degrees in Potree's view model. Enable `Show navigation data` on the page to inspect the live position, target, yaw, pitch, radius, and direction while tuning the start view.
 
 Movement speeds are defined separately:
 
