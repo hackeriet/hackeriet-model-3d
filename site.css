@@ -94,11 +94,22 @@ select {
   cursor: pointer;
 }
 
-.checkbox-control {
+.checkbox-control,
+.range-control {
   display: inline-flex;
   align-items: center;
   gap: 0.35em;
   font-size: 12pt;
+}
+
+.range-control input {
+  width: 7.5em;
+  accent-color: currentColor;
+}
+
+.range-control output {
+  min-width: 2.2em;
+  font-variant-numeric: tabular-nums;
 }
 
 .viewer-controls [disabled] {

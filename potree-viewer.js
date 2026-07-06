@@ -2,6 +2,11 @@
   const elements = {
     navigationSelect: document.querySelector('#navigation-select'),
     detailSelect: document.querySelector('#detail-select'),
+    pointShapeSelect: document.querySelector('#point-shape-select'),
+    pointSizeRange: document.querySelector('#point-size-range'),
+    pointSizeValue: document.querySelector('#point-size-value'),
+    pointMinSizeRange: document.querySelector('#point-min-size-range'),
+    pointMinSizeValue: document.querySelector('#point-min-size-value'),
     toggleNavigationButton: document.querySelector('#toggle-navigation'),
     overlayNavigationButton: document.querySelector('#potree-enable-navigation'),
     resetViewButton: document.querySelector('#reset-view'),
@@ -35,6 +40,12 @@
     },
   };
 
+  const pointShapes = {
+    SQUARE: Potree.PointShape.SQUARE,
+    CIRCLE: Potree.PointShape.CIRCLE,
+    PARABOLOID: Potree.PointShape.PARABOLOID,
+  };
+
   const moveSpeeds = {
     walk: 0.8,
     fly: 0.9,
@@ -57,6 +68,10 @@
   elements.detailSelect.addEventListener('change', () => {
     applyDetailPreset(elements.detailSelect.value);
   });
+
+  elements.pointShapeSelect.addEventListener('change', applyPointRenderingControls);
+  elements.pointSizeRange.addEventListener('input', applyPointRenderingControls);
+  elements.pointMinSizeRange.addEventListener('input', applyPointRenderingControls);
 
   elements.navigationDataToggle.addEventListener('change', () => {
     setNavigationDataVisible(elements.navigationDataToggle.checked);
@@ -119,10 +134,25 @@
     const material = pointcloud.material;
 
     material.activeAttributeName = 'rgba';
-    material.size = 0.8;
-    material.minSize = 1.5;
     material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
-    material.shape = Potree.PointShape.SQUARE;
+    applyPointRenderingControls();
+  }
+
+  function applyPointRenderingControls() {
+    const size = Number(elements.pointSizeRange.value);
+    const minSize = Number(elements.pointMinSizeRange.value);
+
+    elements.pointSizeValue.value = size.toFixed(1);
+    elements.pointMinSizeValue.value = minSize.toFixed(1);
+
+    if (!state.pointcloud) {
+      return;
+    }
+
+    const material = state.pointcloud.material;
+    material.size = size;
+    material.minSize = minSize;
+    material.shape = pointShapes[elements.pointShapeSelect.value] || Potree.PointShape.SQUARE;
   }
 
   function applyDetailPreset(name) {

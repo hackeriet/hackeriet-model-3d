@@ -61,7 +61,7 @@ index.html
 - EDL rendering enabled.
 - 55 degree field of view.
 - RGB point material.
-- Adaptive square point rendering.
+- Adaptive point rendering with runtime controls for point shape, point size, and minimum point size.
 - A fixed reset/start camera position.
 - Walk, fly, and orbit navigation modes.
 - Optional live navigation data for tuning camera position, target, yaw, and pitch.
@@ -202,6 +202,8 @@ const detailPresets = {
 ```
 
 `pointBudget` caps visible points, `minNodeSize` controls how aggressively Potree descends into finer octree nodes, and `maxNodesLoading` controls how many point-cloud nodes Potree may fetch concurrently. The default is `high`.
+
+Point shape, point size, and minimum point size are exposed in the page toolbar so aliasing and moire artifacts can be tuned in the browser. The default material remains square points, size `0.8`, and minimum size `1.5`. Circle or paraboloid points with slightly larger sizes are useful first tests when dense point rendering shimmers too much.
 
 The page starts with point-cloud navigation disabled so the page remains scrollable. Enabling navigation removes the overlay shield and lets Potree receive pointer and wheel events. Pressing `Escape` releases navigation again.
 
