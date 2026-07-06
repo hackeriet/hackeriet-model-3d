@@ -109,7 +109,7 @@
 
   function configurePotreeViewer(viewer) {
     viewer.setEDLEnabled(true);
-    viewer.setFOV(65);
+    viewer.setFOV(55);
     viewer.setBackground('gradient');
     applyDetailPreset(elements.detailSelect.value);
     viewer.loadSettingsFromURL();

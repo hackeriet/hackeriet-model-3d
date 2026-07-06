@@ -59,7 +59,7 @@ index.html
 `potree-viewer.js` starts the Potree viewer on page load. It configures:
 
 - EDL rendering enabled.
-- 65 degree field of view.
+- 55 degree field of view.
 - RGB point material.
 - Adaptive square point rendering.
 - A fixed reset/start camera position.
