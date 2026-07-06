@@ -1,19 +1,21 @@
 (() => {
   const elements = {
-    navigationSelect: document.querySelector('#navigation-select'),
-    detailSelect: document.querySelector('#detail-select'),
-    pointShapeSelect: document.querySelector('#point-shape-select'),
-    pointSizeRange: document.querySelector('#point-size-range'),
-    pointSizeValue: document.querySelector('#point-size-value'),
-    pointMinSizeRange: document.querySelector('#point-min-size-range'),
-    pointMinSizeValue: document.querySelector('#point-min-size-value'),
-    toggleNavigationButton: document.querySelector('#toggle-navigation'),
-    resetViewButton: document.querySelector('#reset-view'),
-    loadingMessage: document.querySelector('.viewer-message'),
-    loadingLabel: document.querySelector('#loading-label'),
-    loadingProgress: document.querySelector('#loading-progress'),
-    navigationDataToggle: document.querySelector('#show-navigation-data'),
-    navigationData: document.querySelector('#navigation-data'),
+    navigationSelect: getRequiredElement('#navigation-select'),
+    detailSelect: getRequiredElement('#detail-select'),
+    pointShapeSelect: getRequiredElement('#point-shape-select'),
+    pointSizeRange: getRequiredElement('#point-size-range'),
+    pointSizeValue: getRequiredElement('#point-size-value'),
+    pointMinSizeRange: getRequiredElement('#point-min-size-range'),
+    pointMinSizeValue: getRequiredElement('#point-min-size-value'),
+    toggleNavigationButton: getRequiredElement('#toggle-navigation'),
+    resetViewButton: getRequiredElement('#reset-view'),
+    loadingMessage: getRequiredElement('.viewer-message'),
+    loadingLabel: getRequiredElement('#loading-label'),
+    loadingProgress: getRequiredElement('#loading-progress'),
+    navigationDataToggle: getRequiredElement('#show-navigation-data'),
+    navigationData: getRequiredElement('#navigation-data'),
+    potreeHost: getRequiredElement('#potree-viewer'),
+    renderArea: getRequiredElement('#potree-render-area'),
   };
 
   const initialView = {
@@ -55,7 +57,6 @@
     navigationEnabled: true,
     potreeViewer: null,
     pointcloud: null,
-    potreeHost: document.querySelector('#potree-viewer'),
     loadingMonitorId: null,
     navigationDataFrameId: null,
   };
@@ -92,14 +93,13 @@
   startPotreeViewer();
 
   function startPotreeViewer() {
-    const source = state.potreeHost.dataset.source;
-    const renderArea = document.querySelector('#potree-render-area');
+    const source = elements.potreeHost.dataset.source;
 
     try {
-      state.potreeHost.dataset.status = 'loading';
+      elements.potreeHost.dataset.status = 'loading';
       setLoadingProgress('Starting point cloud viewer...', null);
 
-      state.potreeViewer = new Potree.Viewer(renderArea);
+      state.potreeViewer = new Potree.Viewer(elements.renderArea);
       configurePotreeViewer(state.potreeViewer);
       setLoadingProgress('Loading point cloud metadata...', 15);
 
@@ -109,11 +109,11 @@
         state.potreeViewer.scene.addPointCloud(state.pointcloud);
         resetPotreeView();
         setLoadingProgress('Preparing visible points...', 45);
-        state.potreeHost.dataset.status = 'loaded';
+        elements.potreeHost.dataset.status = 'loaded';
         monitorInitialPointLoading();
       });
     } catch (error) {
-      state.potreeHost.dataset.status = 'error';
+      elements.potreeHost.dataset.status = 'error';
       setLoadingProgress(`Could not start Potree viewer: ${error.message || error}`, 0);
     }
   }
@@ -138,8 +138,8 @@
     const size = Number(elements.pointSizeRange.value);
     const minSize = Number(elements.pointMinSizeRange.value);
 
-    elements.pointSizeValue.value = size.toFixed(1);
-    elements.pointMinSizeValue.value = minSize.toFixed(1);
+    elements.pointSizeValue.textContent = size.toFixed(1);
+    elements.pointMinSizeValue.textContent = minSize.toFixed(1);
 
     if (!state.pointcloud) {
       return;
@@ -243,10 +243,10 @@
 
   function setNavigationDataVisible(visible) {
     elements.navigationData.hidden = !visible;
+    cancelAnimationFrame(state.navigationDataFrameId);
+    state.navigationDataFrameId = null;
 
     if (!visible) {
-      cancelAnimationFrame(state.navigationDataFrameId);
-      state.navigationDataFrameId = null;
       return;
     }
 
@@ -298,9 +298,19 @@
     return ((degrees % 360) + 360) % 360;
   }
 
+  function getRequiredElement(selector) {
+    const element = document.querySelector(selector);
+
+    if (!element) {
+      throw new Error(`Missing required element: ${selector}`);
+    }
+
+    return element;
+  }
+
   function setNavigationEnabled(enabled) {
     state.navigationEnabled = enabled;
-    state.potreeHost.classList.toggle('navigation-active', state.navigationEnabled);
+    elements.potreeHost.classList.toggle('navigation-active', state.navigationEnabled);
     elements.toggleNavigationButton.textContent = state.navigationEnabled ? 'Release scroll' : 'Enable navigation';
     elements.toggleNavigationButton.setAttribute('aria-pressed', String(state.navigationEnabled));
   }

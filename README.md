@@ -238,6 +238,7 @@ If navigation or loading density feels wrong, tune these values first. Avoid edi
 - Local scripts and vendored Potree workers.
 - Inline JSON-LD and the current inline CSP-compatible page metadata.
 - Potree's need for workers and WebGL-related blob/data resources.
+- Remote images from `hackeriet.no` for the logo and progress-pride flag.
 - Local font assets under `fonts/`; fonts are not loaded from `hackeriet.no` to avoid cross-origin font failures on GitHub Pages.
 
 The page also includes:
@@ -270,6 +271,8 @@ Useful checks before pushing:
 node --check potree-viewer.js
 git diff --check
 ```
+
+Also inspect the browser console after a hard refresh. Expected diagnostics are limited to Potree's normal startup logging; missing assets, CSP violations, CORS font errors, or JavaScript exceptions should be fixed before pushing.
 
 A useful browser smoke test is to load the page and confirm the `#potree-viewer` element reaches:
 
