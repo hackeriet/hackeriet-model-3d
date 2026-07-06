@@ -12,7 +12,8 @@ There is no application server and no build step in the live deployment path. Gi
 
 ```text
 index.html                         Static page shell, metadata, controls, Potree script loading
-site.css                   Site styling and overrides for Potree's global CSS
+site.css                           Site styling and overrides for Potree's global CSS
+fonts/                             Local Roboto font asset used by the page
 potree-viewer.js                   Potree bootstrapping, point-cloud material, camera, navigation state
 obj/                               Original OBJ/MTL mesh and texture images from the scan export
 xyz/cloud.xyz.xz                   Original compressed XYZ+RGB point-cloud source
@@ -41,7 +42,7 @@ The repository is intentionally artifact-heavy. The deployed site is static, so 
 `index.html` is the only page. It has three main responsibilities:
 
 1. Provide document metadata for browsers, search engines, link previews, and structured-data consumers.
-2. Present controls for Potree navigation mode and navigation capture/release.
+2. Present controls for Potree navigation mode, rendering options, and navigation capture/release.
 3. Load the static Potree runtime and `potree-viewer.js`.
 
 The runtime fetch path is:
@@ -67,7 +68,7 @@ index.html
 - Optional live navigation data for tuning camera position, target, yaw, and pitch.
 - Adjustable detail presets for point budget, minimum node size, and concurrent node loading.
 
-The point cloud is passive by default. The Potree canvas is covered by `#potree-navigation-shield` until navigation is explicitly enabled, so ordinary wheel scrolling still scrolls the page. This matters because WebGL viewers normally capture pointer and wheel events aggressively.
+Point-cloud navigation is enabled by default. The toolbar's `Release scroll` control disables navigation and places a transparent `#potree-navigation-shield` over the Potree canvas, so ordinary wheel scrolling can still scroll the page when needed. This matters because WebGL viewers normally capture pointer and wheel events aggressively.
 
 ## CSS and Potree isolation
 
@@ -205,7 +206,7 @@ const detailPresets = {
 
 Point shape, point size, and minimum point size are exposed in the page toolbar so aliasing and moire artifacts can be tuned in the browser. The default material uses circle points, size `1.4`, and minimum size `4.0`. Circle or paraboloid points with slightly larger sizes are useful first tests when dense point rendering shimmers too much.
 
-The page starts with point-cloud navigation disabled so the page remains scrollable. Enabling navigation removes the overlay shield and lets Potree receive pointer and wheel events. Pressing `Escape` releases navigation again.
+The page starts with point-cloud navigation enabled. `Release scroll` places the transparent overlay shield over the viewer so the page can scroll normally; enabling navigation removes that shield and lets Potree receive pointer and wheel events. Pressing `Escape` releases navigation again.
 
 The initial point-cloud camera is defined in `potree-viewer.js`:
 
@@ -237,6 +238,7 @@ If navigation or loading density feels wrong, tune these values first. Avoid edi
 - Local scripts and vendored Potree workers.
 - Inline JSON-LD and the current inline CSP-compatible page metadata.
 - Potree's need for workers and WebGL-related blob/data resources.
+- Local font assets under `fonts/`; fonts are not loaded from `hackeriet.no` to avoid cross-origin font failures on GitHub Pages.
 
 The page also includes:
 

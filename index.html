@@ -9,7 +9,7 @@
   <meta name="color-scheme" content="light dark">
   <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#22272e" media="(prefers-color-scheme: dark)">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://hackeriet.no; img-src 'self' https://hackeriet.no data: blob:; font-src 'self' https://hackeriet.no; connect-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; form-action 'none'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://hackeriet.no; img-src 'self' https://hackeriet.no data: blob:; font-src 'self'; connect-src 'self'; worker-src 'self' blob:; upgrade-insecure-requests">
 
   <title>Hackeriet 3D model</title>
   <link rel="canonical" href="https://hackeriet.github.io/hackeriet-model-3d/">
@@ -119,12 +119,12 @@
           <input type="checkbox" id="show-navigation-data" aria-controls="navigation-data">
           Show navigation data
         </label>
-        <button type="button" id="toggle-navigation" aria-controls="potree-viewer" aria-pressed="false">Enable navigation</button>
+        <button type="button" id="toggle-navigation" aria-controls="potree-viewer" aria-pressed="true">Release scroll</button>
         <button type="button" id="reset-view" aria-controls="potree-viewer">Reset view</button>
       </div>
 
       <p class="control-note">
-        After enabling navigation: W/S move forward/back, A/D move left/right, R/F move up/down.
+        With navigation active: W/S move forward/back, A/D move left/right, R/F move up/down.
         Arrow keys mirror WASD, PageUp/PageDown mirror R/F, mouse wheel changes movement speed,
         left-drag looks around, right-drag translates, and double-click jumps toward a point.
       </p>
@@ -133,9 +133,7 @@
         <section id="viewer-potree" aria-label="Point cloud viewer">
           <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
             <div id="potree-render-area"></div>
-            <div id="potree-navigation-shield">
-              <button type="button" id="potree-enable-navigation" aria-controls="potree-viewer">Enable navigation</button>
-            </div>
+            <div id="potree-navigation-shield" aria-hidden="true"></div>
             <div class="viewer-message" role="status" aria-live="polite">
               <span id="loading-label">Loading point cloud...</span>
               <progress id="loading-progress" max="100"></progress>

@@ -8,7 +8,6 @@
     pointMinSizeRange: document.querySelector('#point-min-size-range'),
     pointMinSizeValue: document.querySelector('#point-min-size-value'),
     toggleNavigationButton: document.querySelector('#toggle-navigation'),
-    overlayNavigationButton: document.querySelector('#potree-enable-navigation'),
     resetViewButton: document.querySelector('#reset-view'),
     loadingMessage: document.querySelector('.viewer-message'),
     loadingLabel: document.querySelector('#loading-label'),
@@ -53,7 +52,7 @@
   };
 
   const state = {
-    navigationEnabled: false,
+    navigationEnabled: true,
     potreeViewer: null,
     pointcloud: null,
     potreeHost: document.querySelector('#potree-viewer'),
@@ -81,10 +80,6 @@
     setNavigationEnabled(!state.navigationEnabled);
   });
 
-  elements.overlayNavigationButton.addEventListener('click', () => {
-    setNavigationEnabled(true);
-  });
-
   elements.resetViewButton.addEventListener('click', resetPotreeView);
 
   document.addEventListener('keydown', event => {
@@ -93,6 +88,7 @@
     }
   });
 
+  setNavigationEnabled(state.navigationEnabled);
   startPotreeViewer();
 
   function startPotreeViewer() {

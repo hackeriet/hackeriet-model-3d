@@ -1,3 +1,11 @@
+@font-face {
+  font-family: 'Roboto';
+  src: url('fonts/Roboto-Regular-webfont.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
 html,
 body {
   min-height: 100%;
@@ -12,7 +20,7 @@ body {
   margin: 0;
   padding: 0;
   line-height: 1.6em;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-family: 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   font-size: 14pt;
   color: #444;
 }
@@ -81,16 +89,14 @@ select {
 }
 
 .viewer-controls select,
-.viewer-controls button,
-#potree-enable-navigation {
+.viewer-controls button {
   color: inherit;
   background: transparent;
   border: 2px solid #C0C0C0;
   padding: 0.25em 0.5em;
 }
 
-.viewer-controls button,
-#potree-enable-navigation {
+.viewer-controls button {
   cursor: pointer;
 }
 
@@ -157,15 +163,6 @@ select {
 
 #potree-navigation-shield {
   z-index: 3;
-}
-
-#potree-enable-navigation {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  z-index: 3;
-  transform: translate(-50%, -50%);
-  background: rgba(248, 248, 248, 0.9);
 }
 
 #loading-label {
@@ -249,8 +246,7 @@ select {
   }
 
   .viewer-controls select,
-  .viewer-controls button,
-  #potree-enable-navigation {
+  .viewer-controls button {
     border-color: #768390;
   }
 
@@ -263,7 +259,6 @@ select {
     background: #171b20;
   }
 
-  #potree-enable-navigation,
   .viewer-message,
   .navigation-data {
     background: rgba(34, 39, 46, 0.86);
