@@ -60,11 +60,11 @@ index.html
 
 - EDL rendering enabled.
 - 65 degree field of view.
-- 3,000,000 point budget.
 - RGB point material.
 - Adaptive square point rendering.
 - A fixed reset/start camera position.
 - Walk, fly, and orbit navigation modes.
+- Adjustable detail presets for point budget, minimum node size, and concurrent node loading.
 
 The point cloud is passive by default. The Potree canvas is covered by `#potree-navigation-shield` until navigation is explicitly enabled, so ordinary wheel scrolling still scrolls the page. This matters because WebGL viewers normally capture pointer and wheel events aggressively.
 
@@ -176,14 +176,26 @@ The point-cloud viewer has three navigation modes:
 - `fly`: first-person movement with vertical movement allowed.
 - `orbit`: orbit controls around the current view target.
 
+The page also exposes a `Detail` selector. It adjusts three Potree loading controls together:
+
+```js
+const detailPresets = {
+  balanced: { pointBudget: 3_000_000, minNodeSize: 30, maxNodesLoading: 4 },
+  high: { pointBudget: 8_000_000, minNodeSize: 10, maxNodesLoading: 10 },
+  maximum: { pointBudget: 9_000_000, minNodeSize: 4, maxNodesLoading: 16 },
+};
+```
+
+`pointBudget` caps visible points, `minNodeSize` controls how aggressively Potree descends into finer octree nodes, and `maxNodesLoading` controls how many point-cloud nodes Potree may fetch concurrently. The default is `high`.
+
 The page starts with point-cloud navigation disabled so the page remains scrollable. Enabling navigation removes the overlay shield and lets Potree receive pointer and wheel events. Pressing `Escape` releases navigation again.
 
 The initial point-cloud camera is defined in `potree-viewer.js`:
 
 ```js
 const initialView = {
-  position: [-6.3, -6.0, 3.35],
-  target: [-6.3, 10.5, 2.75],
+  position: [-6.3, -6.0, 2.2],
+  target: [-6.3, 10.5, 1.6],
 };
 ```
 
@@ -197,7 +209,7 @@ const moveSpeeds = {
 };
 ```
 
-If navigation feels wrong, tune these values first. Avoid editing Potree internals for normal camera or movement changes.
+If navigation or loading density feels wrong, tune these values first. Avoid editing Potree internals for normal camera, movement, or point-budget changes.
 
 ## Security and metadata
 

@@ -1,14 +1,36 @@
 (() => {
   const elements = {
     navigationSelect: document.querySelector('#navigation-select'),
+    detailSelect: document.querySelector('#detail-select'),
     toggleNavigationButton: document.querySelector('#toggle-navigation'),
     overlayNavigationButton: document.querySelector('#potree-enable-navigation'),
     resetViewButton: document.querySelector('#reset-view'),
+    loadingMessage: document.querySelector('.viewer-message'),
+    loadingLabel: document.querySelector('#loading-label'),
+    loadingProgress: document.querySelector('#loading-progress'),
   };
 
   const initialView = {
-    position: [-6.3, -6.0, 3.35],
-    target: [-6.3, 10.5, 2.75],
+    position: [-6.3, -6.0, 2.2],
+    target: [-6.3, 10.5, 1.6],
+  };
+
+  const detailPresets = {
+    balanced: {
+      pointBudget: 3_000_000,
+      minNodeSize: 30,
+      maxNodesLoading: 4,
+    },
+    high: {
+      pointBudget: 8_000_000,
+      minNodeSize: 10,
+      maxNodesLoading: 10,
+    },
+    maximum: {
+      pointBudget: 9_000_000,
+      minNodeSize: 4,
+      maxNodesLoading: 16,
+    },
   };
 
   const moveSpeeds = {
@@ -20,11 +42,17 @@
   const state = {
     navigationEnabled: false,
     potreeViewer: null,
+    pointcloud: null,
     potreeHost: document.querySelector('#potree-viewer'),
+    loadingMonitorId: null,
   };
 
   elements.navigationSelect.addEventListener('change', () => {
     applyNavigationMode(elements.navigationSelect.value);
+  });
+
+  elements.detailSelect.addEventListener('change', () => {
+    applyDetailPreset(elements.detailSelect.value);
   });
 
   elements.toggleNavigationButton.addEventListener('click', () => {
@@ -47,32 +75,36 @@
 
   function startPotreeViewer() {
     const source = state.potreeHost.dataset.source;
-    const message = state.potreeHost.querySelector('.viewer-message');
     const renderArea = document.querySelector('#potree-render-area');
 
     try {
       state.potreeHost.dataset.status = 'loading';
+      setLoadingProgress('Starting point cloud viewer...', null);
+
       state.potreeViewer = new Potree.Viewer(renderArea);
       configurePotreeViewer(state.potreeViewer);
+      setLoadingProgress('Loading point cloud metadata...', 15);
 
       Potree.loadPointCloud(source, 'Hackeriet', event => {
-        configurePointCloud(event.pointcloud);
-        state.potreeViewer.scene.addPointCloud(event.pointcloud);
+        state.pointcloud = event.pointcloud;
+        configurePointCloud(state.pointcloud);
+        state.potreeViewer.scene.addPointCloud(state.pointcloud);
         resetPotreeView();
-        message.remove();
+        setLoadingProgress('Preparing visible points...', 45);
         state.potreeHost.dataset.status = 'loaded';
+        monitorInitialPointLoading();
       });
     } catch (error) {
       state.potreeHost.dataset.status = 'error';
-      message.textContent = `Could not start Potree viewer: ${error.message || error}`;
+      setLoadingProgress(`Could not start Potree viewer: ${error.message || error}`, 0);
     }
   }
 
   function configurePotreeViewer(viewer) {
     viewer.setEDLEnabled(true);
     viewer.setFOV(65);
-    viewer.setPointBudget(3_000_000);
     viewer.setBackground('gradient');
+    applyDetailPreset(elements.detailSelect.value);
     viewer.loadSettingsFromURL();
   }
 
@@ -84,6 +116,66 @@
     material.minSize = 1.5;
     material.pointSizeType = Potree.PointSizeType.ADAPTIVE;
     material.shape = Potree.PointShape.SQUARE;
+  }
+
+  function applyDetailPreset(name) {
+    const preset = detailPresets[name] || detailPresets.high;
+
+    Potree.maxNodesLoading = preset.maxNodesLoading;
+
+    if (state.potreeViewer) {
+      state.potreeViewer.setPointBudget(preset.pointBudget);
+      state.potreeViewer.setMinNodeSize(preset.minNodeSize);
+    }
+  }
+
+  function monitorInitialPointLoading() {
+    cancelAnimationFrame(state.loadingMonitorId);
+
+    const startedAt = performance.now();
+    const settleDelay = 900;
+    let visualProgress = 45;
+    let idleSince = null;
+
+    const tick = () => {
+      const visibleNodes = state.pointcloud?.visibleNodes?.length || 0;
+      const isIdle = Potree.numNodesLoading === 0 && visibleNodes > 0;
+
+      if (isIdle) {
+        idleSince ||= performance.now();
+      } else {
+        idleSince = null;
+      }
+
+      const elapsed = performance.now() - startedAt;
+      const hasTimedOutWithPoints = elapsed > 12_000 && visibleNodes > 0;
+
+      if ((idleSince && performance.now() - idleSince > settleDelay) || hasTimedOutWithPoints) {
+        setLoadingProgress('Point cloud ready.', 100);
+        window.setTimeout(() => {
+          elements.loadingMessage?.remove();
+        }, 250);
+        return;
+      }
+
+      visualProgress = Math.min(92, Math.max(visualProgress, 45 + elapsed / 120));
+      const loadingSuffix = Potree.numNodesLoading > 0 ? ` (${Potree.numNodesLoading} nodes)` : '';
+      setLoadingProgress(`Preparing visible points${loadingSuffix}...`, visualProgress);
+      state.loadingMonitorId = requestAnimationFrame(tick);
+    };
+
+    state.loadingMonitorId = requestAnimationFrame(tick);
+  }
+
+  function setLoadingProgress(label, value) {
+    elements.loadingLabel.textContent = label;
+
+    if (value === null) {
+      elements.loadingProgress.removeAttribute('value');
+      return;
+    }
+
+    elements.loadingProgress.value = Math.max(0, Math.min(100, value));
   }
 
   function applyNavigationMode(mode) {

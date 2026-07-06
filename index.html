@@ -81,43 +81,52 @@
     </header>
 
     <main>
-    <h1>Hackeriet 3D model <span class="flag progress-pride" aria-hidden="true"></span></h1>
+      <h1>Hackeriet 3D model <span class="flag progress-pride" aria-hidden="true"></span></h1>
 
-    <p>
-      An interactive 3D scan of Hackeriet, a hackerspace in Oslo.
-    </p>
+      <p>
+        An interactive 3D scan of Hackeriet, a hackerspace in Oslo.
+      </p>
 
-    <div class="viewer-controls" role="group" aria-label="Point cloud controls">
-      <label for="navigation-select">Navigation:</label>
-      <select id="navigation-select" aria-controls="potree-viewer">
-        <option value="walk">Walk</option>
-        <option value="orbit">Orbit</option>
-        <option value="fly">Fly</option>
-      </select>
-      <button type="button" id="toggle-navigation" aria-controls="potree-viewer" aria-pressed="false">Enable navigation</button>
-      <button type="button" id="reset-view" aria-controls="potree-viewer">Reset view</button>
-    </div>
+      <div class="viewer-controls" role="group" aria-label="Point cloud controls">
+        <label for="navigation-select">Navigation:</label>
+        <select id="navigation-select" aria-controls="potree-viewer">
+          <option value="walk">Walk</option>
+          <option value="orbit">Orbit</option>
+          <option value="fly">Fly</option>
+        </select>
+        <label for="detail-select">Detail:</label>
+        <select id="detail-select" aria-controls="potree-viewer">
+          <option value="balanced">Balanced</option>
+          <option value="high" selected>High</option>
+          <option value="maximum">Maximum</option>
+        </select>
+        <button type="button" id="toggle-navigation" aria-controls="potree-viewer" aria-pressed="false">Enable navigation</button>
+        <button type="button" id="reset-view" aria-controls="potree-viewer">Reset view</button>
+      </div>
 
-    <div class="viewer-wrap">
-      <section id="viewer-potree" aria-label="Point cloud viewer">
-        <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
-          <div id="potree-render-area"></div>
-          <div id="potree-navigation-shield">
-            <button type="button" id="potree-enable-navigation" aria-controls="potree-viewer">Enable navigation</button>
+      <div class="viewer-wrap">
+        <section id="viewer-potree" aria-label="Point cloud viewer">
+          <div id="potree-viewer" data-source="pointclouds/hackeriet-potree/metadata.json">
+            <div id="potree-render-area"></div>
+            <div id="potree-navigation-shield">
+              <button type="button" id="potree-enable-navigation" aria-controls="potree-viewer">Enable navigation</button>
+            </div>
+            <div class="viewer-message" role="status" aria-live="polite">
+              <span id="loading-label">Loading point cloud...</span>
+              <progress id="loading-progress" max="100"></progress>
+            </div>
           </div>
-          <p class="viewer-message" role="status" aria-live="polite">Loading point cloud...</p>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
 
-    <h2>Files</h2>
-    <ul class="resources">
-      <li><a href="pointclouds/hackeriet-potree/metadata.json" type="application/json">Potree point cloud metadata</a></li>
-      <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj" type="text/plain">Original OBJ</a></li>
-      <li><a href="colorplan.pdf" type="application/pdf">Color plan PDF</a></li>
-      <li><a href="ceilingcolorplan.pdf" type="application/pdf">Ceiling color plan PDF</a></li>
-      <li><a href="xyz/cloud.xyz.xz" type="application/x-xz">Compressed source point cloud</a></li>
-    </ul>
+      <h2>Files</h2>
+      <ul class="resources">
+        <li><a href="pointclouds/hackeriet-potree/metadata.json" type="application/json">Potree point cloud metadata</a></li>
+        <li><a href="obj/55be67cdc99a480a9a08368da8e1636e.obj" type="text/plain">Original OBJ</a></li>
+        <li><a href="colorplan.pdf" type="application/pdf">Color plan PDF</a></li>
+        <li><a href="ceilingcolorplan.pdf" type="application/pdf">Ceiling color plan PDF</a></li>
+        <li><a href="xyz/cloud.xyz.xz" type="application/x-xz">Compressed source point cloud</a></li>
+      </ul>
     </main>
   </div>
 
