@@ -64,6 +64,7 @@ index.html
 - Adaptive square point rendering.
 - A fixed reset/start camera position.
 - Walk, fly, and orbit navigation modes.
+- Optional live navigation data for tuning camera position, target, yaw, and pitch.
 - Adjustable detail presets for point budget, minimum node size, and concurrent node loading.
 
 The point cloud is passive by default. The Potree canvas is covered by `#potree-navigation-shield` until navigation is explicitly enabled, so ordinary wheel scrolling still scrolls the page. This matters because WebGL viewers normally capture pointer and wheel events aggressively.
@@ -78,6 +79,7 @@ Potree's bundled CSS includes global document rules intended for fullscreen Potr
 - `body` is forced back to `position: static`, automatic width, automatic height, zero margin, and zero padding.
 - The page layout is applied to `.page-shell` instead of `body`.
 - The point-cloud viewer remains constrained inside `#potree-viewer`.
+- The viewer uses a 16:9 aspect ratio so screenshots and camera tuning are repeatable across screen sizes.
 
 Do not remove `.page-shell` or the `body` overrides without testing page scrolling after Potree has loaded.
 
@@ -207,10 +209,12 @@ The initial point-cloud camera is defined in `potree-viewer.js`:
 
 ```js
 const initialView = {
-  position: [-14.3, 14.0, 1.6],
-  target: [-14.3, 30.5, 1.0],
+  position: [-14.3, 9.0, 1.6],
+  target: [-14.3, -7.5, 1.0],
 };
 ```
+
+This is approximately yaw `180.0` degrees and pitch `-2.1` degrees in Potree's view model. Enable `Show navigation data` on the page to inspect the live position, target, yaw, pitch, radius, and direction while tuning the start view.
 
 Movement speeds are defined separately:
 

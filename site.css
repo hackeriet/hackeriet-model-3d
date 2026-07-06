@@ -18,7 +18,7 @@ body {
 }
 
 .page-shell {
-  max-width: 960px;
+  max-width: 1280px;
   margin: 40px auto;
   padding: 0 10px;
 }
@@ -94,6 +94,13 @@ select {
   cursor: pointer;
 }
 
+.checkbox-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  font-size: 12pt;
+}
+
 .viewer-controls [disabled] {
   opacity: 0.5;
   cursor: default;
@@ -122,8 +129,7 @@ select {
 #potree-viewer {
   display: block;
   width: 100%;
-  height: min(72vh, 720px);
-  min-height: 420px;
+  aspect-ratio: 16 / 9;
   background: #eeeeee;
 }
 
@@ -178,6 +184,24 @@ select {
   background: rgba(255, 255, 255, 0.86);
 }
 
+.navigation-data {
+  position: absolute;
+  right: 1em;
+  top: 1em;
+  z-index: 2;
+  max-width: min(32em, calc(100% - 2em));
+  margin: 0;
+  padding: 0.5em 0.7em;
+  box-sizing: border-box;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  pointer-events: none;
+  font-family: ui-monospace, SFMono-Regular, Consolas, 'Liberation Mono', monospace;
+  font-size: 10pt;
+  line-height: 1.35;
+  background: rgba(255, 255, 255, 0.86);
+}
+
 .resources {
   columns: 2;
   column-gap: 40px;
@@ -196,11 +220,6 @@ select {
 
   #logo {
     width: 65%;
-  }
-
-  #potree-viewer {
-    height: 68vh;
-    min-height: 320px;
   }
 
   .resources {
@@ -234,7 +253,8 @@ select {
   }
 
   #potree-enable-navigation,
-  .viewer-message {
+  .viewer-message,
+  .navigation-data {
     background: rgba(34, 39, 46, 0.86);
   }
 }

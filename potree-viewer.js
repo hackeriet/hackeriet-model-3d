@@ -8,11 +8,13 @@
     loadingMessage: document.querySelector('.viewer-message'),
     loadingLabel: document.querySelector('#loading-label'),
     loadingProgress: document.querySelector('#loading-progress'),
+    navigationDataToggle: document.querySelector('#show-navigation-data'),
+    navigationData: document.querySelector('#navigation-data'),
   };
 
   const initialView = {
-    position: [-14.3, 14.0, 1.6],
-    target: [-14.3, 30.5, 1.0],
+    position: [-14.3, 9.0, 1.6],
+    target: [-14.3, -7.5, 1.0],
   };
 
   const detailPresets = {
@@ -45,6 +47,7 @@
     pointcloud: null,
     potreeHost: document.querySelector('#potree-viewer'),
     loadingMonitorId: null,
+    navigationDataFrameId: null,
   };
 
   elements.navigationSelect.addEventListener('change', () => {
@@ -53,6 +56,10 @@
 
   elements.detailSelect.addEventListener('change', () => {
     applyDetailPreset(elements.detailSelect.value);
+  });
+
+  elements.navigationDataToggle.addEventListener('change', () => {
+    setNavigationDataVisible(elements.navigationDataToggle.checked);
   });
 
   elements.toggleNavigationButton.addEventListener('click', () => {
@@ -205,6 +212,64 @@
     view.position.set(...initialView.position);
     view.lookAt(...initialView.target);
     applyNavigationMode(elements.navigationSelect.value);
+    updateNavigationData();
+  }
+
+  function setNavigationDataVisible(visible) {
+    elements.navigationData.hidden = !visible;
+
+    if (!visible) {
+      cancelAnimationFrame(state.navigationDataFrameId);
+      state.navigationDataFrameId = null;
+      return;
+    }
+
+    const tick = () => {
+      updateNavigationData();
+      state.navigationDataFrameId = requestAnimationFrame(tick);
+    };
+
+    tick();
+  }
+
+  function updateNavigationData() {
+    const viewer = state.potreeViewer;
+    if (!viewer || elements.navigationData.hidden) {
+      return;
+    }
+
+    const view = viewer.scene.view;
+    const position = view.position;
+    const target = view.getPivot();
+    const direction = view.direction;
+    const yawDegrees = normalizeDegrees(radiansToDegrees(view.yaw));
+    const pitchDegrees = radiansToDegrees(view.pitch);
+
+    elements.navigationData.textContent = [
+      'Position: ' + formatVector(position),
+      'Target:   ' + formatVector(target),
+      'Yaw: ' + formatNumber(yawDegrees) + ' deg  Pitch: ' + formatNumber(pitchDegrees) + ' deg',
+      'Radius: ' + formatNumber(view.radius),
+      'Direction: ' + formatVector(direction, 3),
+    ].join('\n');
+  }
+
+  function formatVector(vector, decimals = 2) {
+    return 'x=' + formatNumber(vector.x, decimals)
+      + ' y=' + formatNumber(vector.y, decimals)
+      + ' z=' + formatNumber(vector.z, decimals);
+  }
+
+  function formatNumber(value, decimals = 1) {
+    return Number(value).toFixed(decimals);
+  }
+
+  function radiansToDegrees(radians) {
+    return radians * 180 / Math.PI;
+  }
+
+  function normalizeDegrees(degrees) {
+    return ((degrees % 360) + 360) % 360;
   }
 
   function setNavigationEnabled(enabled) {

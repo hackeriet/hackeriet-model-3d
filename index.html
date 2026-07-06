@@ -100,6 +100,10 @@
           <option value="high" selected>High</option>
           <option value="maximum">Maximum</option>
         </select>
+        <label class="checkbox-control" for="show-navigation-data">
+          <input type="checkbox" id="show-navigation-data" aria-controls="navigation-data">
+          Show navigation data
+        </label>
         <button type="button" id="toggle-navigation" aria-controls="potree-viewer" aria-pressed="false">Enable navigation</button>
         <button type="button" id="reset-view" aria-controls="potree-viewer">Reset view</button>
       </div>
@@ -121,6 +125,7 @@
               <span id="loading-label">Loading point cloud...</span>
               <progress id="loading-progress" max="100"></progress>
             </div>
+            <output id="navigation-data" class="navigation-data" for="show-navigation-data navigation-select reset-view" hidden></output>
           </div>
         </section>
       </div>
