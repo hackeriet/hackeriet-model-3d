@@ -11,8 +11,8 @@
   };
 
   const initialView = {
-    position: [-6.3, -6.0, 2.2],
-    target: [-6.3, 10.5, 1.6],
+    position: [-10.3, -6.0, 1.6],
+    target: [-10.3, 10.5, 1.0],
   };
 
   const detailPresets = {
