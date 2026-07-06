@@ -176,6 +176,19 @@ The point-cloud viewer has three navigation modes:
 - `fly`: first-person movement with vertical movement allowed.
 - `orbit`: orbit controls around the current view target.
 
+Keyboard and mouse controls are handled by Potree's `FirstPersonControls` when navigation is enabled:
+
+- `W` / Up Arrow: move forward.
+- `S` / Down Arrow: move backward.
+- `A` / Left Arrow: move left.
+- `D` / Right Arrow: move right.
+- `R` / PageUp: move up.
+- `F` / PageDown: move down.
+- Mouse wheel: adjust movement speed.
+- Left drag: look around.
+- Right drag: translate/pan.
+- Double-click: jump toward the clicked point.
+
 The page also exposes a `Detail` selector. It adjusts three Potree loading controls together:
 
 ```js

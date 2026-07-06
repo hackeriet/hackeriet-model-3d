@@ -99,6 +99,13 @@ select {
   cursor: default;
 }
 
+.control-note {
+  clear: both;
+  margin: 0.75em 0 0;
+  font-size: 12pt;
+  line-height: 1.45;
+}
+
 .viewer-wrap {
   clear: both;
   margin: 12px auto 30px;
